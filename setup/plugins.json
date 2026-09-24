@@ -1,0 +1,30 @@
+{
+  "marketplaces": {
+    "claude-plugins-official": {
+      "repo": "anthropics/claude-plugins-official",
+      "source": "github"
+    },
+    "korean-law-marketplace": {
+      "repo": "chrisryugj/korean-law-mcp",
+      "source": "github"
+    },
+    "team-attention-plugins": {
+      "repo": "team-attention/plugins-for-claude-natives",
+      "source": "github"
+    }
+  },
+  "plugins": [
+    {
+      "id": "korean-law@korean-law-marketplace",
+      "scope": "user"
+    },
+    {
+      "id": "session-wrap@team-attention-plugins",
+      "scope": "user"
+    },
+    {
+      "id": "skill-creator@claude-plugins-official",
+      "scope": "user"
+    }
+  ]
+}

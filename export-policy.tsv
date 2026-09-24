@@ -1,0 +1,29 @@
+# 공개 레포로 내보낼 때 항목별 처리 방식. bin/export.py 가 읽는다.
+# 항목 경로 패턴(fnmatch)<TAB>방식 — 위에서부터 처음 맞는 줄을 쓴다. 맞는 줄이 없으면 review.
+#
+#   exclude  공개 레포에 아예 두지 않는다
+#   redact   폴더 구조와 "비공개" README 만 남긴다 (파일이면 내용만 안내 문구로 바꾼다)
+#   copy     그대로 복사한다. 유출 검사에 걸리면 review 로 넘어간다
+#   review   내용이 바뀔 때마다 Claude 가 검토해 그대로 공개 / 가려서 공개 / 비공개(redact) 중 하나로 판정한다
+#
+# 항목 단위: skills/<이름> 같은 컨테이너의 자식, projects/<경로>(.mirror-source 가 있는 곳),
+#            global/·hooks/·setup/ 의 각 파일, 그 밖에는 최상위 파일·폴더 하나
+# 모든 텍스트 파일은 먼저 <!-- ME-ARCHIVE:START -->…END, <!-- PRIVATE:START -->…END 구역이 지워진다.
+
+state	exclude
+.dotclaude-role	exclude
+README.md	exclude
+blocklist.txt	redact
+mirror-ignore.txt	redact
+me	redact
+memory	redact
+bin	copy
+prompts	copy
+.githooks	copy
+.gitignore	copy
+install.sh	copy
+links.tsv	copy
+export-policy.tsv	copy
+CLAUDE.md	copy
+PUBLIC_README.md	copy
+*	review

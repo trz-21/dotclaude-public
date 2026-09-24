@@ -1,0 +1,4 @@
+# 규칙(skills/, hooks/, memory/ 등)으로 링크되지 않는 항목만 적는다. 레포 경로<TAB>링크될 위치
+global/CLAUDE.md	~/.claude/CLAUDE.md
+global/settings.json	~/.claude/settings.json
+me	~/.claude/me

@@ -1,0 +1,89 @@
+{
+  "env": {
+    "CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS": "1"
+  },
+  "permissions": {
+    "allow": [
+      "Bash(git *)",
+      "Bash(mkdir *)",
+      "Bash(cd * && git *)",
+      "Bash(rmdir *)",
+      "Edit",
+      "Write",
+      "WebFetch",
+      "WebSearch",
+      "mcp__Sentry__get_issue_details",
+      "mcp__Sentry__get_issue_tag_values",
+      "mcp__Sentry__analyze_issue_with_seer",
+      "mcp__Sentry__search_events",
+      "mcp__Sentry__search_issues",
+      "Bash(gcloud logging read *)",
+      "Bash(gcloud logging read * | jq *)",
+      "Bash(gcloud:*)"
+    ],
+    "defaultMode": "auto"
+  },
+  "model": "opus[1m]",
+  "hooks": {
+    "SessionStart": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "~/.claude/dotclaude/source/install.sh --repair",
+            "timeout": 10
+          }
+        ]
+      }
+    ],
+    "PreCompact": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "~/.claude/hooks/session-close.sh",
+            "timeout": 10
+          }
+        ]
+      }
+    ],
+    "SessionEnd": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "~/.claude/hooks/session-close.sh",
+            "timeout": 10
+          }
+        ]
+      },
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "~/.claude/dotclaude/source/bin/sync.sh --detach",
+            "timeout": 10
+          }
+        ]
+      }
+    ]
+  },
+  "enabledPlugins": {
+    "session-wrap@team-attention-plugins": true,
+    "skill-creator@claude-plugins-official": true,
+    "korean-law@korean-law-marketplace": true
+  },
+  "extraKnownMarketplaces": {
+    "korean-law-marketplace": {
+      "source": {
+        "source": "github",
+        "repo": "chrisryugj/korean-law-mcp"
+      }
+    }
+  },
+  "alwaysThinkingEnabled": true,
+  "awaySummaryEnabled": false,
+  "tui": "fullscreen",
+  "skipDangerousModePermissionPrompt": true,
+  "agentPushNotifEnabled": true
+}

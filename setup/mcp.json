@@ -1,0 +1,66 @@
+{
+  "local": {
+    "~": {
+      "gmail-<ORG>-ad": {
+        "oauth": {
+          "callbackPort": 51873,
+          "clientId": "<OAUTH_CLIENT_ID>"
+        },
+        "type": "http",
+        "url": "https://gmailmcp.googleapis.com/mcp/v1"
+      }
+    },
+    "<WORKSPACE>": {
+      "notion": {
+        "type": "http",
+        "url": "https://mcp.notion.com/mcp"
+      }
+    },
+    "<WORKSPACE>/<SERVER_REPO>": {
+      "notion": {
+        "type": "http",
+        "url": "https://mcp.notion.com/mcp"
+      }
+    },
+    "<WORKSPACE>/<VOICE_AGENT_REPO>": {
+      "notion": {
+        "type": "http",
+        "url": "https://mcp.notion.com/mcp"
+      }
+    },
+    "<WORKSPACE>/<APP_REPO>": {
+      "figma": {
+        "type": "http",
+        "url": "http://127.0.0.1:3845/mcp"
+      },
+      "notion": {
+        "type": "http",
+        "url": "https://mcp.notion.com/mcp"
+      }
+    },
+    "<WORKSPACE>/<ORG>-backend": {
+      "notion": {
+        "type": "http",
+        "url": "https://mcp.notion.com/mcp"
+      }
+    }
+  },
+  "user": {
+    "Sentry": {
+      "type": "http",
+      "url": "https://mcp.sentry.dev/mcp"
+    },
+    "datadog-mcp": {
+      "type": "http",
+      "url": "https://mcp.datadoghq.com/api/unstable/mcp-server/mcp"
+    },
+    "notion": {
+      "type": "http",
+      "url": "https://mcp.notion.com/mcp"
+    },
+    "notion-<ORG>": {
+      "type": "http",
+      "url": "https://mcp.notion.com/mcp"
+    }
+  }
+}

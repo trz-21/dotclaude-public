@@ -1,0 +1,12 @@
+{
+  "skill_name": "implement-plan-item",
+  "evals": [
+    {
+      "id": 0,
+      "name": "publish-feature",
+      "prompt": "발행 기능 작업해줘",
+      "expected_output": "plans/week2.md의 '발행 기능 구현' 항목을 spec.md의 'Saved Posts > 발행하기: 포스트 상태를 draft → published로 변경' 정의에 따라 server (PATCH 라우트) + client (버튼/액션) 단위로 분해하고, 각 단위에 자동 테스트를 추가하며, server↔client 의존이 있는 부분만 직렬, 나머지는 병렬로 처리하는 계획을 세우고 실제 코드 변경을 만든다.",
+      "files": []
+    }
+  ]
+}
