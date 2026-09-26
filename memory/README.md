@@ -8,4 +8,5 @@ masked-1/
 masked-2/
 masked-3/
 masked-4/
+HOME-Desktop-stock/
 ```

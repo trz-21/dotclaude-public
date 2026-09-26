@@ -3,8 +3,8 @@
     "~": {
       "gmail-<ORG>-ad": {
         "oauth": {
-          "callbackPort": 51873,
-          "clientId": "<OAUTH_CLIENT_ID>"
+          "callbackPort": "<SET_ME>",
+          "clientId": "<SET_ME>"
         },
         "type": "http",
         "url": "https://gmailmcp.googleapis.com/mcp/v1"

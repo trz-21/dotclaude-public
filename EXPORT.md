@@ -43,7 +43,7 @@
 | `mirror-ignore.txt` | 🔒 비공개 |  |
 | `projects/masked-c1ee805a` | 🔒 비공개 |  |
 | `prompts` | 그대로 |  |
-| `setup/mcp.json` | 가려서 공개 | 사용자·폴더 범위별 MCP 서버 설정 (Sentry, Datadog, Notion, Figma, Gmail) |
+| `setup/mcp.json` | 가려서 공개 | 사용자·프로젝트 범위별로 등록한 MCP 서버(Notion, Sentry, Datadog, Figma, Gmail) 설정 목록 |
 | `setup/plugins.json` | 그대로 (검토함) | 설치한 Claude Code 플러그인 마켓플레이스와 플러그인 목록 |
 | `skills/_shared` | 가려서 공개 | 스킬들이 공유하는 git worktree 격리 절차, 서브에이전트 활용 원칙, 검증 페르소나(완전성·비용·동시성·성능) |
 | `skills/archive-me` | 그대로 (검토함) | 세션에서 드러난 사용자 정보를 분류 체계에 따라 개인 아카이브에 저장하고 CLAUDE.md 인덱스를 갱신하는 스킬 |
