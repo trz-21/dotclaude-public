@@ -46,7 +46,7 @@
 | `setup/mcp.json` | 가려서 공개 | 사용자·프로젝트 범위별로 등록한 MCP 서버(Notion, Sentry, Datadog, Figma, Gmail) 설정 목록 |
 | `setup/plugins.json` | 그대로 (검토함) | 설치한 Claude Code 플러그인 마켓플레이스와 플러그인 목록 |
 | `skills/_shared` | 가려서 공개 | 스킬들이 공유하는 git worktree 격리 절차, 서브에이전트 활용 원칙, 검증 페르소나(완전성·비용·동시성·성능) |
-| `skills/archive-me` | 그대로 (검토함) | 세션에서 드러난 사용자 정보를 분류 체계에 따라 개인 아카이브에 저장하고 CLAUDE.md 인덱스를 갱신하는 스킬 |
+| `skills/archive-me` | 그대로 (검토함) | 세션에서 드러난 사용자 본인 정보(성격·습관·경력·목표·취향 등)를 분류 체계에 따라 ~/.claude/me/ 아카이브에 저장하고 CLAUDE.md 인덱스를 자동 갱신하는 스킬 (대화형·transcript·hook 모드 지원) |
 | `skills/improve-skills` | 가려서 공개 | 세션에서 쓴 스킬(훅의 무인 실행 포함)을 돌아보고 사용자 교정·실패 신호를 스킬 파일에 반영하며 백업과 변경 기록을 남기는 스킬 |
 | `skills/init-project` | 가려서 공개 | Rust/Axum + Next.js 프로젝트를 스펙 문서, 테스트 하네스, Claude Code 훅까지 한 번에 세팅하는 스킬 |
 | `skills/task-with-harness` | 그대로 (검토함) | 기능 하나를 서브에이전트로 구현하고, 훅이 적용되지 않는 서브에이전트 결과를 메인이 직접 검증한 뒤 커밋하는 워크플로우 |

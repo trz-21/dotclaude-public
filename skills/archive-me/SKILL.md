@@ -95,6 +95,9 @@ python3 ~/.claude/skills/archive-me/scripts/extract_transcript.py <transcript.js
 - YYYY-MM-DD [대화형|transcript:<session-id 앞 8자>|hook:<session-id 앞 8자>] <파일>: <무엇을 추가/변경> ...
 ```
 저장한 게 없어도 `(변경 없음): <세션 한 줄 요약>`으로 남긴다.
+Edit로 덧붙일 때는 파일의 **마지막 줄 전체**를 `old_string`으로 쓴다. 줄 끝 일부만 쓰면
+"저장할 사용자 정보 없음" 같은 반복 문구가 여러 줄에 걸려 매칭이 실패한다 (hook 모드에서 연속으로 겪음).
+마지막 줄은 `_log.md`를 Read로 통째로 읽어 확인한다. Grep `offset`은 음수(끝에서부터)를 받지 않아 에러가 난다.
 
 ## Step 6: 보고
 
