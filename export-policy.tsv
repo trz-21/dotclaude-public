@@ -26,4 +26,7 @@ links.tsv	copy
 export-policy.tsv	copy
 CLAUDE.md	copy
 PUBLIC_README.md	copy
+# 프로젝트 미러는 개인 작업 설정이 대부분이라 기본 비공개. 공개할 미러는 이 줄 위에 copy/review 규칙을 둔다
+# (fnmatch 의 * 는 / 도 맞으므로 projects/<경로> 전체에 걸린다. archive/projects/* 는 해당 없음)
+projects/*	redact
 *	review

@@ -42,12 +42,16 @@ HOMEENC="$(python3 -c 'import os,re; print(re.sub(r"[^A-Za-z0-9]", "-", os.envir
 
 log() { echo "$(date '+%F %T') $*" >> "$LOG"; }
 
-# 동시에 여러 세션이 끝나도 한 번에 하나만. 30분 넘은 잠금은 죽은 것으로 본다
+# 동시에 여러 세션이 끝나도 한 번에 하나만. 아카이브·공개 검토가 각각 최대 1시간이라 나이로는 판단할 수 없어,
+# 잠금에 PID 를 남기고 그 프로세스가 죽었을 때만 회수한다 (PID 없는 옛 잠금은 3시간 지나면 죽은 것으로 본다)
 if ! mkdir "$LOCK" 2>/dev/null; then
-  if [ -n "$(find "$LOCK" -maxdepth 0 -mmin +30 2>/dev/null)" ]; then rmdir "$LOCK"; mkdir "$LOCK" || exit 0
+  pid="$(cat "$LOCK/pid" 2>/dev/null)"
+  if { [ -n "$pid" ] && ! kill -0 "$pid" 2>/dev/null; } || { [ -z "$pid" ] && [ -n "$(find "$LOCK" -maxdepth 0 -mmin +180 2>/dev/null)" ]; }; then
+    log "죽은 잠금 회수 (pid ${pid:-없음})"; rm -f "$LOCK/pid"; rmdir "$LOCK"; mkdir "$LOCK" || exit 0
   else log "다른 동기화가 진행 중이라 건너뜀"; exit 0; fi
 fi
-trap 'rmdir "$LOCK" 2>/dev/null' EXIT
+echo $$ > "$LOCK/pid"
+trap 'rm -f "$LOCK/pid"; rmdir "$LOCK" 2>/dev/null' EXIT
 log "sync 시작"
 
 online() { [ -n "$(git -C "$1" remote)" ] && [ $PUSH = 1 ]; }

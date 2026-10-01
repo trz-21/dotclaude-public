@@ -35,19 +35,27 @@ else
 fi
 [ ${#files[@]} -eq 0 ] && [ ${#names[@]} -eq 0 ] && exit 0
 
+# grep 은 1(매치 없음)까지가 정상. 2 이상(읽기 실패 등)이면 조용히 통과되지 않게 오류로 친다
+ok() { [ "$1" -le 1 ] || echo "[검사 오류] $2 검사 실패 (exit $1)"; }
+
 hits=$(
-  grep -nIE "$PATTERNS" "${files[@]}" /dev/null | sed 's/^/[비밀 값] /'
-  grep -noIE "$EMAIL" "${files[@]}" /dev/null | grep -vE "$EMAIL_OK" | sed 's/^/[이메일] /'
-  grep -nIE "$HOMEPATH" "${files[@]}" /dev/null | sed 's/^/[홈 경로] /'
-  grep -nIE "$LOCALPATH" "${files[@]}" /dev/null | sed 's/^/[로컬 위치] /'
+  grep -nIE "$PATTERNS" "${files[@]}" /dev/null | sed 's/^/[비밀 값] /'; ok "${PIPESTATUS[0]}" 비밀값
+  grep -noIE "$EMAIL" "${files[@]}" /dev/null | grep -vE "$EMAIL_OK" | sed 's/^/[이메일] /'; ok "${PIPESTATUS[0]}" 이메일
+  grep -nIE "$HOMEPATH" "${files[@]}" /dev/null | sed 's/^/[홈 경로] /'; ok "${PIPESTATUS[0]}" 홈경로
+  grep -nIE "$LOCALPATH" "${files[@]}" /dev/null | sed 's/^/[로컬 위치] /'; ok "${PIPESTATUS[0]}" 로컬위치
   if [ -f "$BLOCK" ]; then
-    grep -v -e '^#' -e '^[[:space:]]*$' "$BLOCK" > "${TMPDIR:-/tmp}/dotclaude-block.$$"
-    grep -noIiFf "${TMPDIR:-/tmp}/dotclaude-block.$$" "${files[@]}" /dev/null | sed 's/^/[차단 목록] /'
-    printf '%s\n' "${names[@]}" | python3 -c 'import sys,unicodedata; print(unicodedata.normalize("NFC", sys.stdin.read()), end="")' \
-      | grep -iFf "${TMPDIR:-/tmp}/dotclaude-block.$$" | sed 's/^/[차단 목록·경로] /'
+    grep -v -e '^#' -e '^[[:space:]]*$' "$BLOCK" > "${TMPDIR:-/tmp}/dotclaude-block.$$"; ok $? 차단목록읽기
+    grep -noIiFf "${TMPDIR:-/tmp}/dotclaude-block.$$" "${files[@]}" /dev/null | sed 's/^/[차단 목록] /'; ok "${PIPESTATUS[0]}" 차단목록
+    # 정규화가 실패하면 빈 목록과 비교해 그냥 통과되므로 오류로 친다 (python3 가 막힌 적 있음)
+    nfc_names="$(printf '%s\n' "${names[@]}" | python3 -c 'import sys,unicodedata; print(unicodedata.normalize("NFC", sys.stdin.read()), end="")')" \
+      && [ -n "$nfc_names" ] || echo "[검사 오류] 경로 NFC 정규화 실패 (python3)"
+    printf '%s\n' "$nfc_names" | grep -iFf "${TMPDIR:-/tmp}/dotclaude-block.$$" | sed 's/^/[차단 목록·경로] /'; ok "${PIPESTATUS[1]}" 차단목록·경로
     rm -f "${TMPDIR:-/tmp}/dotclaude-block.$$"
+  elif [ -d "$(dirname "$BLOCK")" ]; then
+    # 원본 레포가 있는데 차단 목록만 없으면 검사를 건너뛴 채 통과되므로 오류로 친다 (공개 사본만 받은 사람은 원본이 없어 해당 없음)
+    echo "[검사 오류] 차단 목록 없음: $BLOCK"
   fi
-  printf '%s\n' "${names[@]}" | grep -E "$HOMEPATH" | sed 's/^/[홈 경로·경로] /'
+  printf '%s\n' "${names[@]}" | grep -E "$HOMEPATH" | sed 's/^/[홈 경로·경로] /'; ok "${PIPESTATUS[1]}" 홈경로·경로
 )
 if [ -n "$hits" ]; then
   echo "leak-check: 공개하면 안 되는 내용이 있어요" >&2

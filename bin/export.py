@@ -27,7 +27,13 @@ LAST_REVIEW = os.path.join(SRC, "state", "last-export-review")
 MAX_REVIEW = int(os.environ.get("DOTCLAUDE_MAX_REVIEW", "10"))
 REVIEW_INTERVAL = 6 * 3600
 TODAY = datetime.now().strftime("%Y-%m-%d")
-RUN = os.path.join(HOME, ".claude", "dotclaude-runs", datetime.now().strftime("export-%Y%m%d-%H%M%S"))
+RUNS = os.path.join(HOME, ".claude", "dotclaude-runs")
+RUN = os.path.join(RUNS, datetime.now().strftime("export-%Y%m%d-%H%M%S"))
+# 실행 폴더 정리: 종류(export-/archive-)마다 최신 RUNS_KEEP 개는 남기고, 그보다 오래됐고 RUNS_MAX_DAYS 지난 것만 지운다.
+# cost.json 은 hook-digest 의 7일 합산에 쓰이니 COST_KEEP_DAYS 안의 것이 있으면 지우지 않는다
+RUNS_KEEP, RUNS_MAX_DAYS, COST_KEEP_DAYS = 20, 14, 7
+# 검토가 있었던 실행에서 결과 확인용으로 남기는 것 (prep/·out/ 같은 전체 사본은 지운다)
+RUN_KEEP_NAMES = {"stage", "review.out.txt", "cost.json"}
 
 # 자식 하나하나가 항목인 폴더 / 파일 하나하나가 항목인 폴더 / .mirror-source 로 항목을 찾는 폴더
 CONTAINERS = ["skills", "agents", "commands", "archive/skills", "archive/agents", "archive/commands", "archive/memory"]
@@ -59,6 +65,50 @@ def save_json(path, data):
     with open(path, "w") as f:
         json.dump(data, f, ensure_ascii=False, indent=1, sort_keys=True)
         f.write("\n")
+
+
+# ---------------------------------------------------------------- 실행 폴더 정리
+def prune_runs(root=RUNS, dry=False, now=None):
+    """오래된 실행 폴더를 지우고 지운(dry 면 지울) 경로 목록을 돌려준다"""
+    now = now or time.time()
+    names = sorted(os.listdir(root)) if os.path.isdir(root) else []
+    gone = []
+    for prefix in ("export-", "archive-"):
+        runs = sorted((n for n in names if n.startswith(prefix) and os.path.isdir(os.path.join(root, n))), reverse=True)
+        for n in runs[RUNS_KEEP:]:  # 이름이 시각이라 이름순 = 시간순
+            path = os.path.join(root, n)
+            if path == RUN or now - os.path.getmtime(path) < RUNS_MAX_DAYS * 86400:
+                continue
+            cost = os.path.join(path, "cost.json")
+            if os.path.exists(cost) and now - os.path.getmtime(cost) < COST_KEEP_DAYS * 86400:
+                continue
+            gone.append(path)
+            if not dry:
+                shutil.rmtree(path, ignore_errors=True)
+    return gone
+
+
+def finish_run(reviewed):
+    """검토가 없었으면 실행 폴더를 지우고, 있었으면 결과 확인용 파일만 남긴다"""
+    if not os.path.isdir(RUN):
+        return
+    if not reviewed:
+        shutil.rmtree(RUN, ignore_errors=True)
+        return
+    for name in os.listdir(RUN):
+        if name in RUN_KEEP_NAMES or fnmatch.fnmatch(name, "review*.json"):
+            continue
+        path = os.path.join(RUN, name)
+        (shutil.rmtree if os.path.isdir(path) and not os.path.islink(path) else os.remove)(path)
+
+
+def parse_claude_json(stdout):
+    """claude -p --output-format json 출력 → (결과 텍스트, 비용 USD). JSON 이 아니면 (stdout 그대로, None)"""
+    try:
+        d = json.loads(stdout)
+        return str(d.get("result") or ""), float(d.get("total_cost_usd") or 0)
+    except (ValueError, TypeError, AttributeError):
+        return stdout, None
 
 
 # ---------------------------------------------------------------- 1) 항목과 방식
@@ -243,6 +293,8 @@ def write_redacted(item, dst, show_tree):
 
 # ---------------------------------------------------------------- 3) Claude 검토
 def review(pending, prep):
+    global REVIEWED
+    REVIEWED = True
     stage = os.path.join(RUN, "stage")
     for it in pending:
         dst = os.path.join(stage, it)
@@ -255,7 +307,7 @@ def review(pending, prep):
                              f"이미 공개된 사본(읽기만): {OUT}\n결과 파일: {RUN}/review.json")
     exe = shutil.which("claude") or os.path.join(HOME, ".local", "bin", "claude")
     try:
-        r = subprocess.run([exe, "-p", prompt, "--model", "opus", "--no-session-persistence", "--strict-mcp-config",
+        r = subprocess.run([exe, "-p", prompt, "--model", "opus", "--output-format", "json", "--exclude-dynamic-system-prompt-sections", "--no-session-persistence", "--strict-mcp-config",
                             "--permission-mode", "bypassPermissions", "--tools", "Read", "Write", "Edit", "Glob", "Grep",
                             "--add-dir", SRC, OUT],
                            cwd=RUN, env=dict(os.environ, CLAUDE_HOOK_CHILD="1"), capture_output=True, text=True,
@@ -263,8 +315,14 @@ def review(pending, prep):
     except subprocess.TimeoutExpired:
         log("검토 시간 초과 — 이번에는 이전 결과를 유지")
         return {}
+    text, usd = parse_claude_json(r.stdout)
     with open(os.path.join(RUN, "review.out.txt"), "w") as f:
-        f.write(r.stdout + "\n--- stderr ---\n" + r.stderr)
+        f.write(text + "\n--- stderr ---\n" + r.stderr)
+    if usd is None:
+        log("검토 비용 확인 못 함 (JSON 출력 아님)")
+    else:
+        save_json(os.path.join(RUN, "cost.json"), {"usd": usd, "at": datetime.now().strftime("%F %T"), "kind": "export"})
+        log(f"검토 비용 ${usd:.4f}")
     if r.returncode != 0:
         log("검토 실패 (exit", r.returncode, ") — 이번에는 이전 결과를 유지")
         return {}
@@ -273,13 +331,27 @@ def review(pending, prep):
         base = os.path.realpath(os.path.join(stage, it))
         for rel in v.get("delete", []):
             target = os.path.realpath(os.path.join(RUN, rel))
-            if target.startswith(base):
+            # 구분자까지 맞춰야 skills/foo 가 skills/foobar 를 지우지 않는다
+            if target == base or target.startswith(base + os.sep):
                 (shutil.rmtree if os.path.isdir(target) else os.remove)(target)
     return results
 
 
 # ---------------------------------------------------------------- 메인
+REVIEWED = False  # 이번 실행에서 LLM 검토를 불렀는지 (실행 폴더 정리 기준)
+
+
 def main():
+    # 예외로 죽으면 디버깅용으로 실행 폴더를 그대로 둔다
+    gone = prune_runs()
+    if gone:
+        log(f"오래된 실행 폴더 {len(gone)}개 정리")
+    code = export()
+    finish_run(REVIEWED)
+    return code
+
+
+def export():
     role_file = os.path.join(OUT, ".dotclaude-role")
     if not os.path.isfile(role_file) or open(role_file).read().strip() != "export":
         log("공개 레포가 등록되지 않았거나 역할이 export 가 아님:", OUT); return 1
@@ -353,7 +425,8 @@ def main():
             src = os.path.join(OUT, p["public_path"])
             (shutil.copytree if os.path.isdir(src) else shutil.copy2)(src, dst)
         elif p["result"] == "redacted":
-            write_redacted(it, dst, show_tree=mode_of(it, rules) == "redact")
+            # 프로젝트 미러는 하위 이름(스킬 이름 등)도 개인 작업의 단서라 구조를 남기지 않는다
+            write_redacted(it, dst, show_tree=mode_of(it, rules) == "redact" and not project_root(it))
         else:
             src = p.pop("from", None) or os.path.join(prep, it)
             os.makedirs(os.path.dirname(dst), exist_ok=True)

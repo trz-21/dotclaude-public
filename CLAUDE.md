@@ -104,13 +104,18 @@ git -C <공개 레포> config user.email "$(gh api user -q .id)+<GitHub 사용�
   - `review` 항목은 내용이 바뀔 때만 Claude가 `prompts/mask.md` 기준으로 그대로 공개·가려서 공개·비공개 중 하나로 판정한다.
     결과는 `state/export.json`에 캐시한다. 검토가 밀리거나 실패하면 이전에 검토된 공개본을 유지하고, 없으면 비공개로 둔다.
   - 모든 텍스트 파일에서 `<!-- PRIVATE:START -->` ~ `<!-- PRIVATE:END -->`(그리고 `ME-ARCHIVE`) 구역은 기계적으로 지운다.
-  - 프로젝트 미러의 로컬 폴더 구조는 공개하지 않는다 (`projects/<이름>`만). 이름이 차단 목록에 걸리면 이름도 가린다.
+  - 프로젝트 미러(`projects/*`)는 개인 작업 설정이 대부분이라 기본 비공개(redact, 하위 구조도 남기지 않음)다. 공개할 미러는 `export-policy.tsv`의 그 줄 위에 규칙을 둔다.
+    로컬 폴더 구조는 공개하지 않는다 (`projects/<이름>`만). 이름이 차단 목록에 걸리면 이름도 가린다.
   - 마지막에 결과 전체를 `bin/leak-check.sh`로 검사하고, 걸리는 항목은 비공개로 바꾼다. 공개 레포 커밋도 pre-commit에서 한 번 더 검사한다.
   - 공개 레포 `EXPORT.md`에 항목별 공개 방식이 정리된다.
 - **유출 검사** (`bin/leak-check.sh`): 비밀 값 패턴, 이메일, 실제 홈 경로, 개인 폴더로 시작하는 로컬 경로, `blocklist.txt`의 문자열을
   파일 내용과 경로 양쪽에서 찾는다.
 
 로그: `~/.claude/dotclaude-sync.log`, 검토 작업 폴더: `~/.claude/dotclaude-runs/`
+- 공개 검토·아카이브 검토의 Claude 비용은 실행 폴더의 `cost.json`(`{"usd", "at", "kind": export|archive}`)에 남고 로그에도 한 줄 찍힌다.
+  `hook-digest.py`가 최근 7일 것을 합산한다.
+- `export.py`는 끝날 때 LLM 검토가 없었던 실행 폴더는 지우고, 있었으면 `stage/`·`review*.json`·`review.out.txt`·`cost.json`만 남긴다.
+  시작할 때 `export-*`·`archive-*` 각각 최신 20개를 빼고 14일 지난 폴더를 지운다 (7일 안의 `cost.json`이 있으면 남긴다).
 
 ## 이 레포에서 작업할 때 규칙
 

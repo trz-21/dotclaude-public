@@ -28,7 +28,9 @@
 | `archive/skills/fix-issue-teams` | 가려서 공개 | Agent Teams로 레포별 팀원이 병렬 탐색·수정하고 검증 팀원이 교차 검증하는 이슈 수정 워크플로우(실험판) |
 | `archive/skills/fix-issues-parallel` | 가려서 공개 | 여러 Sentry 이슈마다 worktree를 미리 만들어 subagent에 나눠 맡기고 메인 컨텍스트에서 검증·커밋하는 병렬 수정 워크플로우 |
 | `archive/skills/infra-task` | 가려서 공개 | 사용자와 스펙을 반복 구체화한 뒤 인프라 변경을 구현하고 호환성·보안·인프라 정합성 관점으로 검증하는 워크플로우 |
+| `archive/skills/init-project` | 🔒 비공개 |  |
 | `archive/skills/monitor-client-logs` | 가려서 공개 | 하루치 클라이언트 로그를 Slack·GCS에서 모아 에러 패턴과 트렌드를 대시보드로 요약하는 스킬 |
+| `archive/skills/task-with-harness` | 🔒 비공개 |  |
 | `archive/skills/wrap` | 그대로 (검토함) | session-wrap 플러그인에 스킬 개선 분석을 얹었던 세션 마무리 스킬 |
 | `bin` | 그대로 |  |
 | `blocklist.txt` | 🔒 비공개 |  |
@@ -50,5 +52,3 @@
 | `skills/archive-me` | 그대로 (검토함) | 세션에서 드러난 사용자 본인 정보(성격·습관·경력·목표·취향 등)를 분류 체계에 따라 ~/.claude/me/ 아카이브에 저장하고 CLAUDE.md 인덱스를 자동 갱신하는 스킬 (대화형·transcript·hook 모드 지원) |
 | `skills/hook-review` | 가려서 공개 | 세션 종료 훅이 무인으로 한 스킬 자동 수정·실패·확인 대기 수정안을 사용자와 함께 검토해 유지·되돌림·반영·기각을 처리하는 스킬 |
 | `skills/improve-skills` | 가려서 공개 | 세션에서 쓴 스킬(훅의 무인 실행 포함)을 돌아보고 사용자 교정·실패 신호를 스킬 파일에 반영하며 백업과 변경 기록을 남기는 스킬 |
-| `skills/init-project` | 가려서 공개 | Rust/Axum + Next.js 프로젝트를 스펙 문서, 테스트 하네스, Claude Code 훅까지 한 번에 세팅하는 스킬 |
-| `skills/task-with-harness` | 그대로 (검토함) | 기능 하나를 서브에이전트로 구현하고, 훅이 적용되지 않는 서브에이전트 결과를 메인이 직접 검증한 뒤 커밋하는 워크플로우 |

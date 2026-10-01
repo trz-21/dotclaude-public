@@ -111,7 +111,8 @@ def archive_candidates():
         for kind in ("skills", "agents", "commands"):
             base = os.path.join(repo, kind)
             for name in sorted(os.listdir(base)) if os.path.isdir(base) else []:
-                if name.startswith(("_", ".")):
+                # _shared 같은 공용 폴더도 후보로 (참조되는지는 판단 단계에서 Grep 으로 본다)
+                if name.startswith("."):
                     continue
                 rel = f"{kind}/{name}"
                 # 사용 기록이 있으면 그것을, 없으면 레포에 들어온 날을 기준으로 (새 스킬 유예)
@@ -146,20 +147,37 @@ def archive_candidates():
 
 
 # ---------------------------------------------------------------- Claude 무인 실행
+def add_cost(stdout):
+    """claude -p --output-format json 출력에서 결과 텍스트를 꺼내고, 비용을 RUN/cost.json 에 누적한다.
+    JSON 이 아니면 stdout 을 그대로 돌려주고 비용은 남기지 않는다"""
+    try:
+        d = json.loads(stdout)
+        text, usd = str(d.get("result") or ""), float(d.get("total_cost_usd") or 0)
+    except (ValueError, TypeError, AttributeError):
+        log("검토 비용 확인 못 함 (JSON 출력 아님)")
+        return stdout
+    path = os.path.join(RUN, "cost.json")
+    total = float(load_json(path, {}).get("usd") or 0) + usd
+    save_json(path, {"usd": total, "at": datetime.now().strftime("%F %T"), "kind": "archive"})
+    log(f"검토 비용 ${usd:.4f} (이번 실행 누적 ${total:.4f})")
+    return text
+
+
 def claude(prompt_file, extra, model="opus"):
     with open(os.path.join(PROMPTS, prompt_file)) as f:
         prompt = f.read() + "\n\n" + extra
     exe = shutil.which("claude") or os.path.join(HOME, ".local", "bin", "claude")
     env = dict(os.environ, CLAUDE_HOOK_CHILD="1")
     try:
-        r = subprocess.run([exe, "-p", prompt, "--model", model, "--no-session-persistence", "--strict-mcp-config",
+        r = subprocess.run([exe, "-p", prompt, "--model", model, "--output-format", "json", "--exclude-dynamic-system-prompt-sections", "--no-session-persistence", "--strict-mcp-config",
                             "--permission-mode", "bypassPermissions", "--tools", "Read", "Write", "Edit", "Glob", "Grep",
                             "--add-dir", SRC],
                            cwd=RUN, env=env, capture_output=True, text=True, stdin=subprocess.DEVNULL, timeout=3600)
     except subprocess.TimeoutExpired:
         raise RuntimeError(f"claude 시간 초과 ({prompt_file})")
+    text = add_cost(r.stdout)
     with open(os.path.join(RUN, prompt_file + ".out.txt"), "w") as f:
-        f.write(r.stdout + "\n--- stderr ---\n" + r.stderr)
+        f.write(text + "\n--- stderr ---\n" + r.stderr)
     if r.returncode != 0:
         raise RuntimeError(f"claude 실패 ({prompt_file}): exit {r.returncode}")
 
@@ -182,10 +200,13 @@ def cell(s):
 
 
 # ---------------------------------------------------------------- 3) 적용
-def apply_archive(decisions):
+def apply_archive(decisions, cand_ids):
     ignore_path = os.path.join(PRI, "mirror-ignore.txt")
     for d in decisions:
-        rel = d["id"]
+        rel = d.get("id") if isinstance(d, dict) else None
+        # Claude 가 고른 것이라도 이번 후보에 없는 id 는 옮기지 않는다
+        if rel not in cand_ids:
+            log("건너뜀 (후보에 없는 id):", rel); continue
         repo = SRC
         src, dst = os.path.join(repo, rel), os.path.join(repo, "archive", rel)
         if not os.path.exists(src) or os.path.exists(dst):
@@ -221,7 +242,7 @@ def main():
     if cands:
         claude("archive-judge.md", f"작업 폴더: {RUN}\n후보 목록: {RUN}/candidates.json\n"
                                    f"원본 레포: {SRC}\n결과 파일: {RUN}/decisions.json")
-        apply_archive(load_json(os.path.join(RUN, "decisions.json"), {}).get("archive", []))
+        apply_archive(load_json(os.path.join(RUN, "decisions.json"), {}).get("archive", []), {c["id"] for c in cands})
 
 
 if __name__ == "__main__":
