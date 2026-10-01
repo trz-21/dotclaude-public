@@ -64,13 +64,16 @@ git -C <공개 레포> config user.email "$(gh api user -q .id)+<GitHub 사용�
 `global/settings.json`(→ `~/.claude/settings.json`)에 아래 훅이 들어 있어야 한다. 원본 레포 없이 공개 사본만 참고하는 경우에는 직접 넣는다.
 ```json
 "hooks": {
-  "SessionStart": [{ "hooks": [{ "type": "command", "command": "~/.claude/dotclaude/source/install.sh --repair", "timeout": 10 }] }],
+  "SessionStart": [{ "hooks": [{ "type": "command", "command": "~/.claude/dotclaude/source/install.sh --repair", "timeout": 10 },
+                               { "type": "command", "command": "python3 ~/.claude/dotclaude/source/hooks/hook-digest.py", "timeout": 10 }] }],
   "SessionEnd":   [{ "hooks": [{ "type": "command", "command": "~/.claude/hooks/session-close.sh", "timeout": 10 }] },
                    { "hooks": [{ "type": "command", "command": "~/.claude/dotclaude/source/bin/sync.sh --detach", "timeout": 10 }] }],
   "PreCompact":   [{ "hooks": [{ "type": "command", "command": "~/.claude/hooks/session-close.sh", "timeout": 10 }] }]
 }
 ```
 `session-close.sh`는 세션이 끝날 때 `archive-me`(사용자 정보 아카이빙)와 `improve-skills`(스킬 자동 보완)를 돌린다. 원하지 않으면 빼도 된다.
+`hook-digest.py`는 그 결과(스킬 자동 수정, 실패, 확인 대기 수정안) 중 마지막 확인 이후 새로 생긴 게 있으면 세션 시작 때 한 줄로 알린다.
+확인은 `/hook-review` 스킬로 한다. 실패는 `session-close.sh`가 바로 macOS 알림으로도 띄운다.
 
 ### 6. 검증
 
@@ -83,6 +86,7 @@ git -C <공개 레포> config user.email "$(gh api user -q .id)+<GitHub 사용�
 | 언제 | 무엇을 | 어디서 |
 |---|---|---|
 | 세션 시작 | 빠진 링크 생성, 일반 파일로 바뀐 링크 복구 (변경분은 레포로) | `install.sh --repair` |
+| 세션 시작 | 훅이 무인으로 한 일 중 새로 확인할 게 있으면 한 줄 알림 (`/hook-review`로 처리) | `hooks/hook-digest.py` |
 | 세션 종료 | 원본: 원격 변경 받기 → 새 스킬·메모리 흡수 → 프로젝트 `.claude` 미러 → 플러그인·MCP 기록 → 사용 기록 누적 → 커밋·푸시 | `bin/sync.sh` |
 | 세션 종료 | 공개 사본: 원본에서 다시 만들기 → 유출 검사 → 커밋·푸시 | `bin/export.py` |
 | 7일마다 | 오래 안 쓴 항목 판단 후 `archive/`로 이동 | `bin/archive-review.py` |

@@ -24,6 +24,13 @@ CLEAN_RUNS_KEEP=3   # 문제 없는 실행 기록은 스킬별로 최근 N개만
 
 log() { echo "$(date '+%F %T') $*" >> "$LOG"; }
 
+# 실패는 바로 알 수 있게 macOS 알림으로 (스킬 수정 같은 나머지는 세션 시작 때 hook-digest.py 가 알린다)
+notify_fail() {
+  local reason
+  reason=$(jq -r 'select(.type=="result") | .result // .subtype // empty' "$2/stream.jsonl" 2>/dev/null | tail -1 | cut -c1-80)
+  osascript -e "display notification \"${reason:-원인은 /hook-review 에서 확인}\" with title \"Claude 훅: $1 실패\"" >/dev/null 2>&1
+}
+
 # ---------------------------------------------------------------- 훅 진입점
 if [ "$1" != "--run" ]; then
   # 워커가 띄운 claude 세션이 끝날 때 다시 훅이 돌지 않게
@@ -51,7 +58,7 @@ mkdir -p "$RUNS" "$STATE" "$HISTORY"
 
 # 같은 세션이 compact → exit처럼 겹쳐 들어오면 순서대로 (최대 20분 대기)
 for _ in $(seq 1200); do mkdir "$LOCK" 2>/dev/null && break; sleep 1; done
-[ -d "$LOCK" ] || { log "[$sid8] lock 획득 실패"; exit 1; }
+[ -d "$LOCK" ] || { log "[$sid8] lock 획득 실패"; notify_fail "session-close 잠금" ""; exit 1; }
 trap 'rmdir "$LOCK"' EXIT
 
 HOOK_SYS='이 세션은 훅이 띄운 무인 실행이다. 사용자에게 질문할 수 없고 Bash도 없다. 스킬의 hook 모드 지시를 따른다.
@@ -100,6 +107,7 @@ archive_me() {
   else
     # mark 안 함 → 다음 트리거 때 재시도
     log "[$sid8] archive-me 실패 (exit $?)"
+    notify_fail archive-me "$run"
   fi
 }
 
@@ -175,13 +183,18 @@ improve_skills() {
     log "[$sid8] improve-skills 완료"
   else
     log "[$sid8] improve-skills 실패 (exit $?)"
+    notify_fail improve-skills "$run"
   fi
 
-  # 바뀐 게 없는 스냅샷은 지운다
+  # 바뀐 게 없는 스냅샷은 지우고, 바뀐 스킬은 수정 직후 상태도 <ts>-after 로 남긴다
+  # (hook-digest.py 가 이후 수동 수정과 섞이지 않게 훅이 바꾼 부분만 diff 로 보여 주려고)
   for d in "${snaps[@]}"; do
     local b="$HISTORY/$(basename "$d")/$ts"
     if diff -rq "$b" "$d" > /dev/null; then rm -rf "$b"
-    else log "[$sid8] 스킬 수정됨: $(basename "$d") (백업 $b)"; fi
+    else
+      mkdir -p "$b-after" && cp -R "$d/." "$b-after/"
+      log "[$sid8] 스킬 수정됨: $(basename "$d") (백업 $b) 위치 $d"
+    fi
     rmdir "$HISTORY/$(basename "$d")" 2>/dev/null
   done
 }

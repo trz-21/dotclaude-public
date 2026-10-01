@@ -34,8 +34,9 @@
 | `blocklist.txt` | 🔒 비공개 |  |
 | `export-policy.tsv` | 그대로 |  |
 | `global/CLAUDE.md` | 그대로 (검토함) | 모든 프로젝트에 적용하는 전역 지침: 실행 전 검증, git worktree 격리, dotclaude 레포 관리 규칙 |
-| `global/settings.json` | 그대로 (검토함) | 전역 Claude Code 설정: 권한 허용 목록, 세션 시작·종료·압축 훅, 플러그인과 모델 설정 |
-| `hooks/session-close.sh` | 그대로 (검토함) | 세션 종료·압축 때 백그라운드 워커로 archive-me와 improve-skills를 무인 실행하고 실행 기록을 남기는 훅 |
+| `global/settings.json` | 그대로 (검토함) | 전역 Claude Code 설정 — 권한 허용 목록, 세션 시작·압축·종료 훅(설정 복구, 훅 리포트 요약, 세션 종료 워커, 동기화), 플러그인 |
+| `hooks/hook-digest.py` | 그대로 (검토함) | 세션 종료 훅이 남긴 로그·변경 기록·확인 대기 목록을 모아 세션 시작 알림 한 줄과 /hook-review 용 리포트를 만드는 스크립트 |
+| `hooks/session-close.sh` | 그대로 (검토함) | 세션 종료·압축 때 백그라운드 워커로 archive-me 와 improve-skills 를 무인 실행하고, 스킬 스냅샷·실패 알림·실행 기록을 남기는 훅 |
 | `install.sh` | 그대로 |  |
 | `links.tsv` | 그대로 |  |
 | `me` | 🔒 비공개 |  |
@@ -47,6 +48,7 @@
 | `setup/plugins.json` | 그대로 (검토함) | 설치한 Claude Code 플러그인 마켓플레이스와 플러그인 목록 |
 | `skills/_shared` | 가려서 공개 | 스킬들이 공유하는 git worktree 격리 절차, 서브에이전트 활용 원칙, 검증 페르소나(완전성·비용·동시성·성능) |
 | `skills/archive-me` | 그대로 (검토함) | 세션에서 드러난 사용자 본인 정보(성격·습관·경력·목표·취향 등)를 분류 체계에 따라 ~/.claude/me/ 아카이브에 저장하고 CLAUDE.md 인덱스를 자동 갱신하는 스킬 (대화형·transcript·hook 모드 지원) |
+| `skills/hook-review` | 가려서 공개 | 세션 종료 훅이 무인으로 한 스킬 자동 수정·실패·확인 대기 수정안을 사용자와 함께 검토해 유지·되돌림·반영·기각을 처리하는 스킬 |
 | `skills/improve-skills` | 가려서 공개 | 세션에서 쓴 스킬(훅의 무인 실행 포함)을 돌아보고 사용자 교정·실패 신호를 스킬 파일에 반영하며 백업과 변경 기록을 남기는 스킬 |
 | `skills/init-project` | 가려서 공개 | Rust/Axum + Next.js 프로젝트를 스펙 문서, 테스트 하네스, Claude Code 훅까지 한 번에 세팅하는 스킬 |
 | `skills/task-with-harness` | 그대로 (검토함) | 기능 하나를 서브에이전트로 구현하고, 훅이 적용되지 않는 서브에이전트 결과를 메인이 직접 검증한 뒤 커밋하는 워크플로우 |

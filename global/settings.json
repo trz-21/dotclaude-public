@@ -32,6 +32,11 @@
             "type": "command",
             "command": "~/.claude/dotclaude/source/install.sh --repair",
             "timeout": 10
+          },
+          {
+            "type": "command",
+            "command": "python3 ~/.claude/dotclaude/source/hooks/hook-digest.py",
+            "timeout": 10
           }
         ]
       }
