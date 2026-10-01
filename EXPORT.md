@@ -13,6 +13,7 @@
 | `archive/memory/boardgame-simulator` | 🔒 비공개 |  |
 | `archive/memory/home-MEMORY-skill-notes.md` | 🔒 비공개 |  |
 | `archive/memory/masked-131d6a34` | 🔒 비공개 |  |
+| `archive/memory/masked-32e00c99` | 🔒 비공개 |  |
 | `archive/memory/masked-7218b55f` | 🔒 비공개 |  |
 | `archive/memory/no-local-doc-accumulation` | 가려서 공개 | 스킬이 로컬 프로젝트에 작업 로그·계획·세션 문서를 쌓지 않고 대화로 보고하도록 한 피드백 메모 |
 | `archive/projects/boardgame-simulator` | 가려서 공개 | Rust/Axum + Next.js 프로젝트에 쓰던 .claude 하네스 스냅샷 (컴파일·테스트·스펙 동기화 훅, DoD, 커밋 규칙) |
