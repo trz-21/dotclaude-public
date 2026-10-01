@@ -71,8 +71,12 @@ git -C <공개 레포> config user.email "$(gh api user -q .id)+<GitHub 사용�
   "PreCompact":   [{ "hooks": [{ "type": "command", "command": "~/.claude/hooks/session-close.sh", "timeout": 10 }] }]
 }
 ```
-`session-close.sh`는 세션이 끝날 때 `archive-me`(사용자 정보 아카이빙)와 `improve-skills`(스킬 자동 보완)를 돌린다. 원하지 않으면 빼도 된다.
+`session-close.sh`는 `archive-me`(사용자 정보 아카이빙)와 `improve-skills`(스킬 자동 보완)를 돌린다. 원하지 않으면 빼도 된다.
+세션이 끝나거나 compact 될 때는 transcript를 대기열(`~/.claude/hooks/state/queue.txt`)에 넣기만 하고,
+마지막 일괄 실행 후 24시간이 지났을 때 대기열 전체를 모아 스킬마다 claude를 한 번씩만 띄운다 (실행마다 드는 고정비를 줄이려고).
+바로 돌리려면 `session-close.sh --flush`(대기열), `session-close.sh --run <transcript...>`(지정한 세션).
 `hook-digest.py`는 그 결과(스킬 자동 수정, 실패, 확인 대기 수정안) 중 마지막 확인 이후 새로 생긴 게 있으면 세션 시작 때 한 줄로 알린다.
+최근 7일 무인 실행 비용(훅 실행 + 공개 검토·아카이브 검토)이 $10를 넘어도 알린다.
 확인은 `/hook-review` 스킬로 한다. 실패는 `session-close.sh`가 바로 macOS 알림으로도 띄운다.
 
 ### 6. 검증
@@ -86,7 +90,8 @@ git -C <공개 레포> config user.email "$(gh api user -q .id)+<GitHub 사용�
 | 언제 | 무엇을 | 어디서 |
 |---|---|---|
 | 세션 시작 | 빠진 링크 생성, 일반 파일로 바뀐 링크 복구 (변경분은 레포로) | `install.sh --repair` |
-| 세션 시작 | 훅이 무인으로 한 일 중 새로 확인할 게 있으면 한 줄 알림 (`/hook-review`로 처리) | `hooks/hook-digest.py` |
+| 세션 시작 | 훅이 무인으로 한 일 중 새로 확인할 게 있으면 한 줄 알림 (`/hook-review`로 처리), 7일 무인 실행 비용이 $10 넘으면 같이 알림 | `hooks/hook-digest.py` |
+| 세션 종료·compact | transcript를 대기열에 넣고, 24시간마다 대기열 전체로 archive-me → improve-skills를 한 번씩 실행. 실패한 세션은 대기열에 남아 다음에 재시도 | `hooks/session-close.sh` |
 | 세션 종료 | 원본: 원격 변경 받기 → 새 스킬·메모리 흡수 → 프로젝트 `.claude` 미러 → 플러그인·MCP 기록 → 사용 기록 누적 → 커밋·푸시 | `bin/sync.sh` |
 | 세션 종료 | 공개 사본: 원본에서 다시 만들기 → 유출 검사 → 커밋·푸시 | `bin/export.py` |
 | 7일마다 | 오래 안 쓴 항목 판단 후 `archive/`로 이동 | `bin/archive-review.py` |
