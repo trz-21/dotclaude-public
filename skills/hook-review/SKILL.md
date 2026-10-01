@@ -6,7 +6,7 @@ allowed-tools: Read, Edit, Write, Glob, Grep, Bash(python3 *), Bash(diff *), Bas
 
 # Hook Review
 
-`session-close.sh`(세션 종료·compact 때 archive-me → improve-skills)는 사람 없이 돈다.
+`session-close.sh`(세션 종료·compact 때 대기열에 넣고, 하루 한 번 모아서 archive-me → improve-skills)는 사람 없이 돈다.
 이 스킬은 그 결과를 사용자가 확인하는 자리다. 세션 시작 때 `hook-digest.py`가 새 소식이 있으면 한 줄로 알려 준다.
 
 - 리포트: `python3 ~/.claude/hooks/hook-digest.py --report` (`--all`이면 이미 확인한 것까지)
@@ -23,7 +23,8 @@ allowed-tools: Read, Edit, Write, Glob, Grep, Bash(python3 *), Bash(diff *), Bas
 1. **스킬 자동 수정**: 스킬별로 "무엇을 바꿨나 — 근거(사용자 지적 등)". CHANGELOG 항목이 기준이고, diff는 실제로 그렇게 바뀌었는지 대조하는 데 쓴다.
    비교 대상이 "현재 스킬"로 표시된 건 훅 이후 수동 수정이 섞였을 수 있으니 CHANGELOG에 적힌 부분만 훅 변경으로 말한다.
 2. **실패**: 시각, 스킬, 원인 한 줄.
-3. **확인 대기**: 번호, 대상 스킬, 바꿀 내용 한 줄, 근거 횟수. ⚠️우선 항목을 먼저.
+3. **비용**: 리포트 4절의 최근 7일 무인 실행 비용이 알림 기준을 넘었으면 합계와 가장 큰 종류를 한 줄로.
+4. **확인 대기**: 번호, 대상 스킬, 바꿀 내용 한 줄, 근거 횟수. ⚠️우선 항목을 먼저.
 
 아무것도 없으면 "새로 확인할 것 없음"이라고 말하고 Step 5로 간다.
 
@@ -37,7 +38,9 @@ allowed-tools: Read, Edit, Write, Glob, Grep, Bash(python3 *), Bash(diff *), Bas
 ## Step 3: 실패 처리
 
 원인을 보고 판단한다.
-- 일시적인 원인(로그인 풀림, 네트워크, 잠금 대기 초과)이고 리포트에 "다시 돌리기" 명령이 있으면, 다시 돌릴지 묻고 원하면 그 명령을 실행한다.
+- 일시적인 원인(로그인 풀림, 네트워크, 잠금 대기 초과)이면 다시 돌릴지 묻는다. 실패한 세션은 대기열에 남아 다음 일괄 실행(하루 한 번) 때
+  저절로 다시 돌므로, 기다려도 되면 그대로 둔다. 바로 돌리길 원하면 리포트의 "다시 돌리기" 명령
+  (`session-close.sh --run <transcript...>`, 세션 없이 실패한 건 `session-close.sh --flush`)을 실행한다.
   워커가 claude를 두 번 띄워 몇 분 걸리므로 Bash의 `run_in_background`로 실행하고, 끝나면 `~/.claude/hooks/hook.log` 끝부분으로 결과를 확인해 알린다.
 - 같은 원인이 반복되거나 스킬·스크립트 문제로 보이면 원인을 설명하고, 고치는 건 사용자와 정한다.
 

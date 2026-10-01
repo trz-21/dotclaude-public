@@ -44,3 +44,5 @@
 | 2026-09-24 | `memory/<PROJECT_MEMORY_1>` | 한 프로젝트의 자료 전용 메모리로, 프로젝트가 끝나 다시 쓸 계기가 없다. |
 | 2026-09-24 | `memory/<PROJECT_MEMORY_2>` | 한 프로젝트 전용 메모리이고, 담긴 규칙(로컬 문서 누적 금지)은 이미 task-with-harness·init-project 스킬 수정으로 반영돼 있다. |
 | 2026-09-24 | `memory/<PROJECT_MEMORY_3>` | 학습용 web-todo 프로젝트 전용 worktree 예외 메모리로, 작업이 끝났고 178일간 쓰이지 않았다. |
+| 2026-10-01 | `skills/init-project` | 사용자가 더 이상 쓰지 않는다고 확인 (마지막 사용 2026-06). Rust/Axum + Next.js 하네스 프로젝트 초기화용이었다. |
+| 2026-10-01 | `skills/task-with-harness` | 사용자가 더 이상 쓰지 않는다고 확인 (마지막 사용 2026-06). boardgame-simulator 구조(루트 단일 레포, backend/·frontend/)를 전제한 하네스 구현 워크플로우였다. |

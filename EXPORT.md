@@ -9,7 +9,7 @@
 | `.gitignore` | 그대로 |  |
 | `CLAUDE.md` | 그대로 |  |
 | `README.md` | 그대로 |  |
-| `archive/README.md` | 가려서 공개 | 더 이상 쓰지 않는 스킬·프로젝트 설정·메모리 아카이브의 목록과 자동 아카이브 기록 |
+| `archive/README.md` | 가려서 공개 | 더 이상 쓰지 않는 스킬·프로젝트 설정·메모리 보관소의 목록과 자동 아카이브 기록 |
 | `archive/memory/boardgame-simulator` | 🔒 비공개 |  |
 | `archive/memory/home-MEMORY-skill-notes.md` | 🔒 비공개 |  |
 | `archive/memory/masked-131d6a34` | 🔒 비공개 |  |
@@ -20,7 +20,7 @@
 | `archive/projects/service-for-small-business` | 가려서 공개 | Rust+TS 풀스택 프로젝트에서 로컬 docs 대신 GitHub Issue→브랜치→PR→Wiki 흐름을 강제하고 컴파일·테스트·커버리지·Wiki 갱신 리마인드를 훅으로 건 하네스 설정 |
 | `archive/projects/temp-workspace` | 가려서 공개 | 작업 로그 누락 시 응답을 막는 문서 강제 훅 중심의 초기 .claude 하네스 스냅샷 |
 | `archive/projects/weekly-plan-work` | 가려서 공개 | 주차별 스펙으로 plan을 세우고 항목을 wave 단위로 병렬 구현해 항목마다 커밋하는 /work 스킬, 커밋 메시지의 리뷰 칸을 채우는 /commit-review 스킬, 대화에서 나온 규칙을 CLAUDE.md에 자동으로 추가하는 Stop 훅 |
-| `archive/skills/_shared` | 가려서 공개 | 아카이브된 스킬들이 참조하던 대상 레포 목록과 레포별 전문가 페르소나(서버·앱·음성 에이전트) |
+| `archive/skills/_shared` | 가려서 공개 | 보관된 스킬들이 참조하던 대상 레포 정보, 레포 전문가·검증자 페르소나, 서브에이전트 활용 원칙 |
 | `archive/skills/analyze-agent-logs` | 가려서 공개 | LiveKit 음성 에이전트의 GCP Cloud Logging 프로덕션 로그를 call_id나 기간으로 조회해 심각도별로 분류·요약하던 스킬 |
 | `archive/skills/analyze-client-log` | 가려서 공개 | Slack 알림과 GCS에서 클라이언트 로그를 찾아 받아 코드 기준으로 비정상 통화 원인을 분석하는 워크플로우 |
 | `archive/skills/cleanup-zombie-instances` | 가려서 공개 | MIG에서 빠졌지만 RUNNING으로 남은 GCE 인스턴스를 찾아 SIGTERM으로 drain한 뒤 자동 셧다운시키는 스킬 |
@@ -28,17 +28,17 @@
 | `archive/skills/fix-issue-teams` | 가려서 공개 | Agent Teams로 레포별 팀원이 병렬 탐색·수정하고 검증 팀원이 교차 검증하는 이슈 수정 워크플로우(실험판) |
 | `archive/skills/fix-issues-parallel` | 가려서 공개 | 여러 Sentry 이슈마다 worktree를 미리 만들어 subagent에 나눠 맡기고 메인 컨텍스트에서 검증·커밋하는 병렬 수정 워크플로우 |
 | `archive/skills/infra-task` | 가려서 공개 | 사용자와 스펙을 반복 구체화한 뒤 인프라 변경을 구현하고 호환성·보안·인프라 정합성 관점으로 검증하는 워크플로우 |
-| `archive/skills/init-project` | 🔒 비공개 |  |
+| `archive/skills/init-project` | 가려서 공개 | 서비스 설명을 받아 Rust/Axum + Next.js 프로젝트와 스펙 문서, Claude 훅 하네스를 한 번에 세팅하던 스킬 |
 | `archive/skills/monitor-client-logs` | 가려서 공개 | 하루치 클라이언트 로그를 Slack·GCS에서 모아 에러 패턴과 트렌드를 대시보드로 요약하는 스킬 |
-| `archive/skills/task-with-harness` | 🔒 비공개 |  |
+| `archive/skills/task-with-harness` | 그대로 (검토함) | 기능 하나를 서브에이전트로 구현시키고 메인이 컴파일·테스트·커버리지를 직접 검증한 뒤 커밋하던 스킬 |
 | `archive/skills/wrap` | 그대로 (검토함) | session-wrap 플러그인에 스킬 개선 분석을 얹었던 세션 마무리 스킬 |
 | `bin` | 그대로 |  |
 | `blocklist.txt` | 🔒 비공개 |  |
 | `export-policy.tsv` | 그대로 |  |
 | `global/CLAUDE.md` | 그대로 (검토함) | 모든 프로젝트에 적용하는 전역 지침: 실행 전 검증, git worktree 격리, dotclaude 레포 관리 규칙 |
-| `global/settings.json` | 그대로 (검토함) | 전역 Claude Code 설정 — 권한 허용 목록, 세션 시작·압축·종료 훅(설정 복구, 훅 리포트 요약, 세션 종료 워커, 동기화), 플러그인 |
-| `hooks/hook-digest.py` | 그대로 (검토함) | 세션 종료 훅이 남긴 로그·변경 기록·확인 대기 목록을 모아 세션 시작 알림 한 줄과 /hook-review 용 리포트를 만드는 스크립트 |
-| `hooks/session-close.sh` | 그대로 (검토함) | 세션 종료·압축 때 백그라운드 워커로 archive-me 와 improve-skills 를 무인 실행하고, 스킬 스냅샷·실패 알림·실행 기록을 남기는 훅 |
+| `global/settings.json` | 그대로 (검토함) | 전역 Claude Code 설정 (권한 허용·확인 목록, 세션 시작·종료 훅, 플러그인) |
+| `hooks/hook-digest.py` | 그대로 (검토함) | 세션 종료 훅의 결과(스킬 자동 수정·실패·확인 대기·무인 실행 비용)를 세션 시작 때 알리고 리포트로 만드는 스크립트 |
+| `hooks/session-close.sh` | 그대로 (검토함) | 세션 종료·압축 때 transcript를 대기열에 넣고 하루 한 번 archive-me·improve-skills를 무인 일괄 실행하는 훅 |
 | `install.sh` | 그대로 |  |
 | `links.tsv` | 그대로 |  |
 | `me` | 🔒 비공개 |  |
@@ -48,7 +48,7 @@
 | `prompts` | 그대로 |  |
 | `setup/mcp.json` | 가려서 공개 | 사용자·프로젝트 범위별로 등록한 MCP 서버(Notion, Sentry, Datadog, Figma, Gmail) 설정 목록 |
 | `setup/plugins.json` | 그대로 (검토함) | 설치한 Claude Code 플러그인 마켓플레이스와 플러그인 목록 |
-| `skills/_shared` | 가려서 공개 | 스킬들이 공유하는 git worktree 격리 절차, 서브에이전트 활용 원칙, 검증 페르소나(완전성·비용·동시성·성능) |
-| `skills/archive-me` | 그대로 (검토함) | 세션에서 드러난 사용자 본인 정보(성격·습관·경력·목표·취향 등)를 분류 체계에 따라 ~/.claude/me/ 아카이브에 저장하고 CLAUDE.md 인덱스를 자동 갱신하는 스킬 (대화형·transcript·hook 모드 지원) |
-| `skills/hook-review` | 가려서 공개 | 세션 종료 훅이 무인으로 한 스킬 자동 수정·실패·확인 대기 수정안을 사용자와 함께 검토해 유지·되돌림·반영·기각을 처리하는 스킬 |
+| `skills/_shared` | 가려서 공개 | 스킬이 코드를 수정할 때 git worktree로 격리하는 공통 절차 |
+| `skills/archive-me` | 그대로 (검토함) | 세션에서 드러난 사용자 정보를 분류 체계에 따라 ~/.claude/me/에 저장하고 CLAUDE.md 인덱스를 갱신하는 스킬 |
+| `skills/hook-review` | 가려서 공개 | 세션 종료 훅이 무인으로 한 스킬 수정·실패·확인 대기 수정안을 사용자와 함께 검토하고 처리하는 스킬 |
 | `skills/improve-skills` | 가려서 공개 | 세션에서 쓴 스킬(훅의 무인 실행 포함)을 돌아보고 사용자 교정·실패 신호를 스킬 파일에 반영하며 백업과 변경 기록을 남기는 스킬 |

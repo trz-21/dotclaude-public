@@ -19,9 +19,21 @@
       "mcp__Sentry__search_issues",
       "Bash(gcloud logging read *)",
       "Bash(gcloud logging read * | jq *)",
-      "Bash(gcloud:*)"
+      "Bash(gcloud * list*)",
+      "Bash(gcloud * describe *)",
+      "Bash(gcloud config list*)",
+      "Bash(gcloud auth list*)"
     ],
-    "defaultMode": "auto"
+    "defaultMode": "auto",
+    "ask": [
+      "Bash(git push --force*)",
+      "Bash(git push -f*)",
+      "Bash(git push * --force*)",
+      "Bash(git push * -f*)",
+      "Bash(git reset --hard*)",
+      "Bash(git clean -f*)",
+      "Bash(git branch -D *)"
+    ]
   },
   "model": "opus[1m]",
   "hooks": {

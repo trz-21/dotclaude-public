@@ -11,7 +11,7 @@
 ## 디렉토리 구조
 
 ```
-../.worktrees/
+${REPOS_ROOT}/.worktrees/
   └── <WORKTREE_ID>/
       ├── repo-a/                 (git worktree)
       ├── repo-b/                 (git worktree)
@@ -26,7 +26,7 @@
 - 호출한 스킬에 따라 결정한다: `fix`, `refactor`, `feat` 등
 
 ### short-id
-- **Sentry 이슈**: 이슈 ID에서 추출 (예: `PROJ-123` → `proj-123`)
+- **이슈 트래커 ID가 있으면**: 그 ID에서 추출 (예: `PROJ-123` → `proj-123`)
 - **자연어 입력**: 핵심 키워드 2~3개 조합, 소문자+하이픈 (예: `login-timeout`)
 
 ### 타임스탬프
@@ -43,8 +43,9 @@ fix-login-timeout-0213-1432
 스킬 내에서 아래 변수를 사용한다:
 
 ```
+REPOS_ROOT    = 수정 대상 레포가 들어 있는 폴더 (git -C <레포> rev-parse --show-toplevel 의 상위 폴더. 보통 레포들을 모아 둔 작업 폴더 <WORKSPACE>)
 WORKTREE_ID   = "<prefix>-<short-id>-<MMDD-HHMM>"
-WORKTREE_BASE = "../.worktrees/${WORKTREE_ID}"
+WORKTREE_BASE = "${REPOS_ROOT}/.worktrees/${WORKTREE_ID}"
 WORKTREE_REPO = "${WORKTREE_BASE}/<REPO_NAME>"
 ```
 
@@ -57,7 +58,7 @@ WORKTREE_REPO = "${WORKTREE_BASE}/<REPO_NAME>"
 mkdir -p ${WORKTREE_BASE}
 
 # 2. 수정 대상 레포별 worktree 생성 (병렬 실행 가능)
-cd ../<REPO> && \
+cd ${REPOS_ROOT}/<REPO> && \
   git worktree add ${WORKTREE_BASE}/<REPO> -b ${WORKTREE_ID}
 ```
 
@@ -92,14 +93,14 @@ git commit -m "<commit message>"
 머지 직후 아래를 순서대로 실행한다:
 ```bash
 # 1. 각 수정 레포의 worktree 제거
-cd ../<REPO>
+cd ${REPOS_ROOT}/<REPO>
 git worktree remove ${WORKTREE_BASE}/<REPO>
 
 # 2. 빈 디렉토리 정리
 rmdir ${WORKTREE_BASE}
 
 # 3. 임시 브랜치 삭제
-cd ../<REPO>
+cd ${REPOS_ROOT}/<REPO>
 git branch -d ${WORKTREE_ID}
 ```
 
