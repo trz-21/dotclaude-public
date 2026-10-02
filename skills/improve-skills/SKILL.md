@@ -12,7 +12,7 @@ session-wrap에서 스킬 개선 부분만 떼어낸 것이며, 문서·자동�
 
 - 백업·변경 기록: `~/.claude/skills/.history/` (`CHANGELOG.md`, `PENDING.md`)
 - 훅 실행 기록: `~/.claude/hooks/runs/<skill>/<id>/` (`input.*`, `stream.jsonl`, `meta.json`, 검토 후 `reviewed`)
-- 훅: `~/.claude/hooks/session-close.sh` (clear·종료·compact 때 archive-me → improve-skills 순서로 실행)
+- 훅: `~/.claude/hooks/session-close.sh` (clear·종료·compact 때 세션을 대기열에 넣고, 하루 한 번 대기열 전체로 archive-me → improve-skills를 한 번씩 실행)
 - 스크립트: `~/.claude/skills/improve-skills/scripts/`
 
 ## 입력
@@ -23,7 +23,7 @@ session-wrap에서 스킬 개선 부분만 떼어낸 것이며, 문서·자동�
 | 스킬 이름 (예: `write-doc`) | 현재 세션 중 그 스킬 부분만 |
 | `.jsonl` 경로 | 지난 세션. 먼저 `python3 ~/.claude/skills/improve-skills/scripts/extract_skill_session.py <경로>`로 요약본을 만들어 읽는다 |
 | `runs` | 검토 대기 중인 훅 실행 기록. `reviewed` 파일이 없는 `~/.claude/hooks/runs/*/*/`마다 `digest_run.py <dir>`로 요약해 읽고, 검토가 끝나면 `reviewed`를 만든다 |
-| `--hook <input.md>` | 훅 워커가 호출. 입력 파일에 원 세션 요약(A)과 훅 실행 요약(B)이 들어 있다. 아래 "hook 모드" 참고 |
+| `--hook <input.md>` | 훅 워커가 호출. 입력 파일에 원 세션 요약들(A)과 훅 실행 요약(B)이 들어 있다. 아래 "hook 모드" 참고 |
 
 대화형으로 실행할 때 `~/.claude/skills/.history/PENDING.md`에 항목이 있으면 같이 검토한다.
 hook 모드가 사람 확인이 필요하다고 미뤄둔 수정안들이다. 반영했거나 기각한 항목은 지운다.
@@ -58,6 +58,7 @@ git 레포인지는 `git -C <스킬 디렉토리> rev-parse --show-toplevel`로 
 | 대화에서 떠올린 개선 아이디어 (아직 검증 안 됨) | "이렇게 하면 더 나을 것 같은데" 수준 | **C** |
 | 스킬 description이 트리거에 실패 | 써야 할 때 안 불렸거나, 엉뚱할 때 불림 | **A** (description 수정) |
 | 훅 실행에서 권한 거부·도구 에러·비정상 종료 | digest의 `권한 거부`, `도구 에러`, `exit` | **A** |
+| 훅 실행이 스스로 복구한 도구 에러 | digest의 `도구 에러(이후 복구됨)` | 같은 실수가 여러 실행에서 반복될 때만 **B** |
 | 훅 실행이 스스로 보고한 막힘 | digest의 `ISSUES(자기보고)` | **A** (지시가 모호했다는 보고면 B) |
 | 훅 실행 결과가 스킬 규칙과 다름 | 도구 호출 순서·최종 응답을 SKILL.md 규칙과 대조해서 빠진 단계가 보임 | **B** |
 | 훅이 만든 결과를 사용자가 나중에 대화에서 고침 | 아카이브 내용을 사용자가 정정함 | **A** |
@@ -138,7 +139,10 @@ A/B 등급 수정안을 **사용자에게 미리 묻지 않고** 적용한다. �
 훅 워커가 사람 없이 띄운 세션이다. 파일 도구(Read/Write/Edit/Glob/Grep)만 있고 Bash는 없다.
 워커가 이미 해둔 것: 입력 추출, 대상 스킬 스냅샷 백업, 실행 후 `reviewed` 표시와 처리 지점 기록.
 
-1. `input.md`를 읽는다. A = 원 세션 요약, B = 훅 실행 요약들, C = 스킬 위치별 수정 가능 여부.
+1. `input.md`를 읽는다. A = 원 세션 요약들(`# A-1.`, `# A-2.` … 세션마다 하나, 없을 수도 있다), B = 훅 실행 요약들,
+   C = 스킬 위치별 수정 가능 여부. A에는 워커가 "스킬을 썼고 그 뒤에 사용자 발화가 있는" 세션만 넣는다.
+   신호는 **세션마다 따로** 찾는다. 한 세션의 지적을 다른 세션 스킬의 근거로 쓰지 않고, 같은 스킬에 대해
+   여러 세션에서 같은 방향의 신호가 나오면 근거 횟수로 합친다.
 2. Step 1~3을 그대로 하되, Step 1의 수정 가능 여부는 **C를 그대로 따른다.** Bash가 없어서 git 여부를
    직접 확인할 수 없고, Glob으로 `.git`을 찾으면 홈 디렉토리 전체를 뒤지다 시간 초과가 난다.
 3. 적용 범위가 대화형보다 좁다:
@@ -146,4 +150,7 @@ A/B 등급 수정안을 **사용자에게 미리 묻지 않고** 적용한다. �
    - B 등급, 스크립트 수정(실행 검증을 못 하므로), Step 4의 "먼저 묻는" 경우는 적용하지 않고
      `~/.claude/skills/.history/PENDING.md`에 수정안(파일, 바꿀 위치, 바꿀 내용, 근거)을 적어둔다.
    - 백업은 워커가 했으니 Step 4의 백업 명령은 건너뛴다. `CHANGELOG.md` 기록은 한다 (`(hook)` 표시).
+     워커 백업 경로는 `~/.claude/skills/.history/<skill>/<ts>/`이고, `<ts>`는 이번 run 디렉토리 이름
+     (`<ts>-<id>`, input.md가 있는 폴더)의 앞부분이다. CHANGELOG의 `(<ts>)`와 Step 5 되돌리기 명령에 이 실제 경로를 쓴다
+     (input.md에는 백업 경로가 없어서 이전 실행이 되돌리기 명령을 채우지 못했다).
 4. 보고는 최종 응답으로 대신한다. Step 5 형식으로 짧게.

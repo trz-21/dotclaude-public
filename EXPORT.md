@@ -9,11 +9,11 @@
 | `.gitignore` | 그대로 |  |
 | `CLAUDE.md` | 그대로 |  |
 | `README.md` | 그대로 |  |
-| `archive/README.md` | 가려서 공개 | 더 이상 쓰지 않는 스킬·프로젝트 설정·메모리 보관소의 목록과 자동 아카이브 기록 |
+| `archive/README.md` | 가려서 공개 | 더 이상 쓰지 않는 스킬·프로젝트 설정·메모리 아카이브의 목록과 자동 아카이브 기록 |
 | `archive/memory/boardgame-simulator` | 🔒 비공개 |  |
+| `archive/memory/boardgame-simulator` | 그대로 (검토함) | 작업할 때 subagent를 적극적으로 쓰라는 프로젝트 전용 피드백 메모리 (아카이브) |
 | `archive/memory/home-MEMORY-skill-notes.md` | 🔒 비공개 |  |
 | `archive/memory/masked-131d6a34` | 🔒 비공개 |  |
-| `archive/memory/masked-32e00c99` | 🔒 비공개 |  |
 | `archive/memory/masked-7218b55f` | 🔒 비공개 |  |
 | `archive/memory/no-local-doc-accumulation` | 가려서 공개 | 스킬이 로컬 프로젝트에 작업 로그·계획·세션 문서를 쌓지 않고 대화로 보고하도록 한 피드백 메모 |
 | `archive/projects/boardgame-simulator` | 가려서 공개 | Rust/Axum + Next.js 프로젝트에 쓰던 .claude 하네스 스냅샷 (컴파일·테스트·스펙 동기화 훅, DoD, 커밋 규칙) |
@@ -51,5 +51,5 @@
 | `setup/plugins.json` | 그대로 (검토함) | 설치한 Claude Code 플러그인 마켓플레이스와 플러그인 목록 |
 | `skills/_shared` | 가려서 공개 | 스킬이 코드를 수정할 때 git worktree로 격리하는 공통 절차 |
 | `skills/archive-me` | 그대로 (검토함) | 세션에서 드러난 사용자 정보를 분류 체계에 따라 ~/.claude/me/에 저장하고 CLAUDE.md 인덱스를 갱신하는 스킬 |
-| `skills/hook-review` | 가려서 공개 | 세션 종료 훅이 무인으로 한 스킬 수정·실패·확인 대기 수정안을 사용자와 함께 검토하고 처리하는 스킬 |
-| `skills/improve-skills` | 가려서 공개 | 세션에서 쓴 스킬(훅의 무인 실행 포함)을 돌아보고 사용자 교정·실패 신호를 스킬 파일에 반영하며 백업과 변경 기록을 남기는 스킬 |
+| `skills/hook-review` | 가려서 공개 | 세션 종료 훅이 무인으로 한 스킬 자동 수정·실패·확인 대기 수정안을 사용자와 함께 검토하고 처리하는 스킬 |
+| `skills/improve-skills` | 가려서 공개 | 세션에서 쓴 스킬을 돌아보고 사용자 교정·실패 신호를 스킬 파일에 백업·변경 기록과 함께 반영하는 스킬 (훅 무인 모드 포함) |

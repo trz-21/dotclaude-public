@@ -15,6 +15,9 @@ allowed-tools: Read, Edit, Write, Glob, Grep, Bash(python3 *), Bash(diff *), Bas
 - 수정 전 백업 `<skill>/<ts>/`, 훅이 고친 직후 `<skill>/<ts>-after/` (`~/.claude/skills/.history/` 아래)
 
 인자 `all`을 받으면 리포트에 `--all`을 붙인다.
+호출 때 일괄 처리를 지시하면("다 고쳐라" 등) Step 2·4에서 묻지 않고 기본값으로 처리한다. 자동 수정은 유지하고,
+확인 대기는 추천대로 반영하되 근거가 약하거나 애매한 항목은 보류한다. 항목별 결정은 Step 5 보고에 적는다
+(결정을 이미 넘겼는데 항목마다 다시 물으면 중복이다).
 
 ## Step 1: 리포트 읽고 요약
 
@@ -42,6 +45,8 @@ allowed-tools: Read, Edit, Write, Glob, Grep, Bash(python3 *), Bash(diff *), Bas
   저절로 다시 돌므로, 기다려도 되면 그대로 둔다. 바로 돌리길 원하면 리포트의 "다시 돌리기" 명령
   (`session-close.sh --run <transcript...>`, 세션 없이 실패한 건 `session-close.sh --flush`)을 실행한다.
   워커가 claude를 두 번 띄워 몇 분 걸리므로 Bash의 `run_in_background`로 실행하고, 끝나면 `~/.claude/hooks/hook.log` 끝부분으로 결과를 확인해 알린다.
+  재실행이 도는 동안에는 Step 4에서 재실행 대상 스킬(특히 improve-skills·archive-me)을 고치지 않고, 재실행이 끝난 뒤(hook.log로 확인)
+  반영한다. 이미 겹쳤으면 끝난 뒤 백업과 diff해서 내 수정만 들어갔는지 확인한다 (워커가 내 수정을 "스킬 수정됨"으로 잘못 기록하거나 충돌할 수 있다).
 - 같은 원인이 반복되거나 스킬·스크립트 문제로 보이면 원인을 설명하고, 고치는 건 사용자와 정한다.
 
 ## Step 4: 확인 대기 수정안 처리
@@ -63,7 +68,7 @@ allowed-tools: Read, Edit, Write, Glob, Grep, Bash(python3 *), Bash(diff *), Bas
 마지막으로 처리 결과를 짧게 보고한다:
 ```
 훅 리뷰:
-- 자동 수정 6건 확인 (되돌림 1: example-skill Step 5 규칙)
+- 자동 수정 6건 확인 (되돌림 1: write-doc Step 5 연결 규칙)
 - 실패 2건 재실행 → 완료
 - 확인 대기: 반영 2 · 기각 1 · 보류 2
 ```
