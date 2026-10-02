@@ -10,8 +10,8 @@
 | `CLAUDE.md` | 그대로 |  |
 | `README.md` | 그대로 |  |
 | `archive/README.md` | 가려서 공개 | 더 이상 쓰지 않는 스킬·프로젝트 설정·메모리 아카이브의 목록과 자동 아카이브 기록 |
-| `archive/memory/boardgame-simulator` | 🔒 비공개 |  |
 | `archive/memory/boardgame-simulator` | 그대로 (검토함) | 작업할 때 subagent를 적극적으로 쓰라는 프로젝트 전용 피드백 메모리 (아카이브) |
+| `archive/memory/boardgame-simulator` | 🔒 비공개 |  |
 | `archive/memory/home-MEMORY-skill-notes.md` | 🔒 비공개 |  |
 | `archive/memory/masked-131d6a34` | 🔒 비공개 |  |
 | `archive/memory/masked-7218b55f` | 🔒 비공개 |  |
