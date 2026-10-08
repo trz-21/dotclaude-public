@@ -37,7 +37,7 @@
 | `blocklist.txt` | 🔒 비공개 |  |
 | `export-policy.tsv` | 그대로 |  |
 | `global/CLAUDE.md` | 그대로 (검토함) | 모든 프로젝트에 적용하는 전역 지침: 실행 전 검증, git worktree 격리, dotclaude 레포 관리 규칙 |
-| `global/settings.json` | 그대로 (검토함) | 전역 Claude Code 설정 (권한 허용·확인 목록, 세션 시작·종료 훅, 플러그인) |
+| `global/settings.json` | 그대로 (검토함) | Claude Code 전역 설정 — 허용·확인 권한 규칙, 세션 시작·종료·압축 전 훅(설치 복구, 훅 요약, 세션 마무리, 동기화), 사용 플러그인과 마켓플레이스 지정 |
 | `hooks/hook-digest.py` | 그대로 (검토함) | 세션 종료 훅의 결과(스킬 자동 수정·실패·확인 대기·무인 실행 비용)를 세션 시작 때 알리고 리포트로 만드는 스크립트 |
 | `hooks/session-close.sh` | 그대로 (검토함) | 세션 종료·압축 때 transcript를 대기열에 넣고 하루 한 번 archive-me·improve-skills를 무인 일괄 실행하는 훅 |
 | `install.sh` | 그대로 |  |
