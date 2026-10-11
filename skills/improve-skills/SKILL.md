@@ -150,7 +150,9 @@ A/B 등급 수정안을 **사용자에게 미리 묻지 않고** 적용한다. �
    - B 등급, 스크립트 수정(실행 검증을 못 하므로), Step 4의 "먼저 묻는" 경우는 적용하지 않고
      `~/.claude/skills/.history/PENDING.md`에 수정안(파일, 바꿀 위치, 바꿀 내용, 근거)을 적어둔다.
    - 백업은 워커가 했으니 Step 4의 백업 명령은 건너뛴다. `CHANGELOG.md` 기록은 한다 (`(hook)` 표시).
-     워커 백업 경로는 `~/.claude/skills/.history/<skill>/<ts>/`이고, `<ts>`는 이번 run 디렉토리 이름
-     (`<ts>-<id>`, input.md가 있는 폴더)의 앞부분이다. CHANGELOG의 `(<ts>)`와 Step 5 되돌리기 명령에 이 실제 경로를 쓴다
-     (input.md에는 백업 경로가 없어서 이전 실행이 되돌리기 명령을 채우지 못했다).
+     워커 백업 경로는 `~/.claude/skills/.history/<skill>/<ts>/`인데, input.md에는 이 경로가 없다.
+     `<ts>`는 이번 run 디렉토리 이름(`<ts>-<id>`, input.md가 있는 폴더)의 앞부분과 같거나 1~2초 뒤다
+     (워커가 run 디렉토리와 백업의 시각을 따로 찍는다). 그래서 이름을 그대로 가정하지 말고,
+     `path`를 `~/.claude/skills/.history`로 두고 Glob `<skill>/<날짜>-<시분>*/SKILL.md`로 실제 디렉토리를 확인한다
+     (없는 디렉토리를 Glob의 `path`로 주면 도구 에러가 난다). CHANGELOG의 `(<ts>)`와 Step 5 되돌리기 명령에 확인한 경로를 쓴다.
 4. 보고는 최종 응답으로 대신한다. Step 5 형식으로 짧게.
