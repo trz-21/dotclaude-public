@@ -45,6 +45,7 @@
 | `me` | 🔒 비공개 |  |
 | `memory` | 🔒 비공개 |  |
 | `mirror-ignore.txt` | 🔒 비공개 |  |
+| `projects/ad-automation` | 🔒 비공개 |  |
 | `projects/masked-c1ee805a` | 🔒 비공개 |  |
 | `prompts` | 그대로 |  |
 | `setup/mcp.json` | 가려서 공개 | 사용자·프로젝트 범위별로 등록한 MCP 서버(Notion, Sentry, Datadog, Figma, Gmail) 설정 목록 |
