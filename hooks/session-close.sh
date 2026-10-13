@@ -248,6 +248,8 @@ improve_skills() {
   } | sort -u )
 
   run=$(new_run_dir improve-skills)
+  # 백업 폴더 시각은 run 디렉토리 이름에서 따온다 (date 를 다시 찍으면 input.md 를 만드는 동안 1~2초 어긋난다)
+  snap=$(basename "$run"); snap=${snap%-$bid}
   {
     echo "# improve-skills hook 입력 ($(date '+%F %T'), trigger: $trigger)"
     echo
@@ -260,10 +262,12 @@ improve_skills() {
     echo
     echo "# C. 스킬 위치별 수정 가능 여부 (워커 판정)"
     for d in "${dirs[@]}"; do classify "$d"; done
+    echo
+    echo "# D. 워커가 만든 수정 전 백업 (CHANGELOG 와 되돌리기 명령에 이 경로를 쓴다)"
+    for d in "${dirs[@]}"; do editable "$d" && echo "- \`$d\` → \`$HISTORY/$(basename "$d")/$snap\`"; done
   } > "$run/input.md"
 
   # 직접 수정 가능한 스킬을 미리 스냅샷 (모델이 아니라 워커가 백업을 보장)
-  snap=$(date +%Y%m%d-%H%M%S)
   for d in "${dirs[@]}"; do
     editable "$d" || continue
     mkdir -p "$HISTORY/$(basename "$d")/$snap" && cp -R "$d/." "$HISTORY/$(basename "$d")/$snap/"
