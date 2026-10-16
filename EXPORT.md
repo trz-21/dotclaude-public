@@ -48,7 +48,7 @@
 | `projects/ad-automation` | 🔒 비공개 |  |
 | `projects/masked-c1ee805a` | 🔒 비공개 |  |
 | `prompts` | 그대로 |  |
-| `setup/mcp.json` | 가려서 공개 | 사용자·프로젝트 범위별로 등록한 MCP 서버(Notion, Sentry, Datadog, Figma, Gmail) 설정 목록 |
+| `setup/mcp.json` | 가려서 공개 | 사용자 범위와 프로젝트별로 등록한 MCP 서버 목록(Notion, Sentry, Datadog, Figma, Gmail 등)과 연결 방식 |
 | `setup/plugins.json` | 그대로 (검토함) | 설치한 Claude Code 플러그인 마켓플레이스와 플러그인 목록 |
 | `skills/_shared` | 가려서 공개 | 스킬이 코드를 수정할 때 git worktree로 격리하는 공통 절차 |
 | `skills/archive-me` | 그대로 (검토함) | 세션에서 드러난 사용자 정보를 분류 체계에 따라 ~/.claude/me/에 저장하고 CLAUDE.md 인덱스를 갱신하는 스킬 |

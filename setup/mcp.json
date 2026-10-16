@@ -54,6 +54,18 @@
       "type": "http",
       "url": "https://mcp.datadoghq.com/api/unstable/mcp-server/mcp"
     },
+    "gmail-<ACCOUNT>": {
+      "args": [
+        "-y",
+        "@gongrzhe/server-gmail-autoauth-mcp@1.1.11"
+      ],
+      "command": "npx",
+      "env": {
+        "GMAIL_CREDENTIALS_PATH": "<SET_ME>",
+        "GMAIL_OAUTH_PATH": "<SET_ME>"
+      },
+      "type": "stdio"
+    },
     "notion": {
       "type": "http",
       "url": "https://mcp.notion.com/mcp"
