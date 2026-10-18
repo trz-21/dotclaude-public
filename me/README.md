@@ -9,4 +9,5 @@ identity/
 interests/
 life/
   career/
+people/
 ```
