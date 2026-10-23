@@ -47,3 +47,4 @@
 | 2026-10-01 | `skills/init-project` | 사용자가 더 이상 쓰지 않는다고 확인 (마지막 사용 2026-06). Rust/Axum + Next.js 하네스 프로젝트 초기화용이었다. |
 | 2026-10-01 | `skills/task-with-harness` | 사용자가 더 이상 쓰지 않는다고 확인 (마지막 사용 2026-06). boardgame-simulator 구조(루트 단일 레포, backend/·frontend/)를 전제한 하네스 구현 워크플로우였다. |
 | 2026-10-01 | `memory/boardgame-simulator` | 165일간 쓰이지 않은 boardgame-simulator 전용 메모리로, 이 프로젝트의 .claude 설정과 전용 하네스 스킬(task-with-harness, init-project)이 이미 아카이브되어 다시 쓸 계기가 없다. 담긴 내용은 'subagent 적극 활용' 피드백 하나뿐이고, 이 프로젝트 경로에서만 불러온다. |
+| 2026-10-23 | `projects/ad-automation` | 2026-10-22 로컬 실행본을 다른 PC의 실행본으로 대체하며 삭제해 원본이 사라진 미러이고, 해당 사실은 관련 프로젝트 메모리에 이미 기록돼 있다. |

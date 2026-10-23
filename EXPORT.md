@@ -9,13 +9,14 @@
 | `.gitignore` | 그대로 |  |
 | `CLAUDE.md` | 그대로 |  |
 | `README.md` | 그대로 |  |
-| `archive/README.md` | 가려서 공개 | 더 이상 쓰지 않는 스킬·프로젝트 설정·메모리 아카이브의 목록과 자동 아카이브 기록 |
+| `archive/README.md` | 가려서 공개 | 더 이상 쓰지 않는 스킬·프로젝트 설정·메모리 보관소의 목록과 자동 아카이브 기록 |
 | `archive/memory/boardgame-simulator` | 그대로 (검토함) | 작업할 때 subagent를 적극적으로 쓰라는 프로젝트 전용 피드백 메모리 (아카이브) |
 | `archive/memory/boardgame-simulator` | 🔒 비공개 |  |
 | `archive/memory/home-MEMORY-skill-notes.md` | 🔒 비공개 |  |
 | `archive/memory/masked-131d6a34` | 🔒 비공개 |  |
 | `archive/memory/masked-7218b55f` | 🔒 비공개 |  |
 | `archive/memory/no-local-doc-accumulation` | 가려서 공개 | 스킬이 로컬 프로젝트에 작업 로그·계획·세션 문서를 쌓지 않고 대화로 보고하도록 한 피드백 메모 |
+| `archive/projects/ad-automation` | 가려서 공개 | 광고 문의 메일을 분류해 답장 초안을 임시보관함에 만들고, 광고 서버 부킹을 미승인 상태로 입력하고, 노션 트래커에 기록하는 무인 처리 스킬(발송·승인은 사람이 하도록 선을 그음) |
 | `archive/projects/boardgame-simulator` | 가려서 공개 | Rust/Axum + Next.js 프로젝트에 쓰던 .claude 하네스 스냅샷 (컴파일·테스트·스펙 동기화 훅, DoD, 커밋 규칙) |
 | `archive/projects/commit-to-blog` | 가려서 공개 | plans 항목 하나를 spec/design 근거로 공백 점검·병렬 분해·서브에이전트 구현·메인 직접 검증·커밋까지 진행하는 implement-plan-item 스킬과 eval |
 | `archive/projects/service-for-small-business` | 가려서 공개 | Rust+TS 풀스택 프로젝트에서 로컬 docs 대신 GitHub Issue→브랜치→PR→Wiki 흐름을 강제하고 컴파일·테스트·커버리지·Wiki 갱신 리마인드를 훅으로 건 하네스 설정 |
@@ -45,7 +46,6 @@
 | `me` | 🔒 비공개 |  |
 | `memory` | 🔒 비공개 |  |
 | `mirror-ignore.txt` | 🔒 비공개 |  |
-| `projects/ad-automation` | 🔒 비공개 |  |
 | `projects/masked-c1ee805a` | 🔒 비공개 |  |
 | `prompts` | 그대로 |  |
 | `setup/mcp.json` | 가려서 공개 | 사용자 범위와 프로젝트별로 등록한 MCP 서버 목록(Notion, Sentry, Datadog, Figma, Gmail 등)과 연결 방식 |
