@@ -87,6 +87,30 @@
           }
         ]
       }
+    ],
+    "PreToolUse": [
+      {
+        "matcher": "AskUserQuestion",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "~/.claude/hooks/notify-question.sh 2>/dev/null || true",
+            "timeout": 5
+          }
+        ]
+      }
+    ],
+    "Notification": [
+      {
+        "matcher": "permission_prompt|elicitation_dialog",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "~/.claude/hooks/notify-question.sh 2>/dev/null || true",
+            "timeout": 5
+          }
+        ]
+      }
     ]
   },
   "enabledPlugins": {
