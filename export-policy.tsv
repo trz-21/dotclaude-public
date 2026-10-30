@@ -16,6 +16,8 @@ README.md	exclude
 blocklist.txt	redact
 mirror-ignore.txt	redact
 me	redact
+# ccd 고정 폴더 목록은 개인 경로라 비공개
+global/claude-dirs	redact
 memory	redact
 bin	copy
 prompts	copy

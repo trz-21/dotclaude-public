@@ -1,5 +1,5 @@
 #!/bin/bash
-# 새 기기에서 비공개 레포 setup/ 기록대로 플러그인 마켓플레이스·플러그인·MCP 서버를 설치한다.
+# 새 기기에서 비공개 레포 setup/ 기록대로 Homebrew 패키지·플러그인 마켓플레이스·플러그인·MCP 서버를 설치한다.
 # 이미 있는 것은 건너뛴다. 비밀 값(<SET_ME>)이 필요한 MCP 서버와 OAuth 로그인은 마지막에 목록으로 알려 준다.
 #
 #   setup-env.sh [--dry-run]
@@ -7,6 +7,7 @@
 # 기록 형식 (sync.sh 가 매번 갱신)
 #   setup/plugins.json  {"marketplaces": {이름: source}, "plugins": [{"id": "플러그인@마켓", "scope": "user"}]}
 #   setup/mcp.json      {"user": {이름: 설정}, "local": {"~/경로": {이름: 설정}}}
+#   setup/brew.txt      패키지<TAB>쓰는 곳 (손으로 관리)
 DRY=0; [ "${1:-}" = --dry-run ] && DRY=1
 PRI="$HOME/.claude/dotclaude/source"
 S="$PRI/setup"
@@ -15,6 +16,22 @@ run() { if [ $DRY = 1 ]; then echo "  (dry) $*"; else "$@"; fi; }
 has_word() { grep -qE "(^|[^A-Za-z0-9_.-])$(printf %s "$2" | sed 's/[][\.*^$+?(){}|/]/\\&/g')([^A-Za-z0-9_.-]|$)" <<<"$1"; }  # 부분 문자열 말고 이름 단위로
 CJ="$HOME/.claude.json"
 todo=()
+
+# ---------------------------------------------------------------- Homebrew 패키지
+if [ -f "$S/brew.txt" ]; then
+  if command -v brew >/dev/null; then
+    while IFS=$'\t' read -r pkg _; do
+      [ -z "$pkg" ] || [ "${pkg:0:1}" = "#" ] && continue
+      command -v "$pkg" >/dev/null || brew list --formula "$pkg" >/dev/null 2>&1 && continue   # 시스템에 있으면 (macOS 기본 jq 등) 건너뜀
+      echo "brew 설치: $pkg"
+      run brew install "$pkg" || todo+=("brew 패키지 $pkg 설치 실패: brew install $pkg")
+    done < "$S/brew.txt"
+  else
+    todo+=("Homebrew 가 없어 setup/brew.txt 의 패키지를 설치하지 못함 (https://brew.sh)")
+  fi
+  grep -q '^terminal-notifier' "$S/brew.txt" && \
+    todo+=("시스템 설정 → 알림 → terminal-notifier 에서 알림 허용 켜기 (목록에 없으면 terminal-notifier -message test 한 번 실행)")
+fi
 
 # ---------------------------------------------------------------- 플러그인
 if [ -f "$S/plugins.json" ]; then

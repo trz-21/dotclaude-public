@@ -3,3 +3,4 @@ global/CLAUDE.md	~/.claude/CLAUDE.md
 global/settings.json	~/.claude/settings.json
 me	~/.claude/me
 state/skill-history	~/.claude/skills/.history
+global/claude-dirs	~/.claude-dirs

@@ -1,0 +1,5 @@
+# Claude 환경에 필요한 Homebrew 패키지. setup-env.sh 가 없는 것만 설치한다. 손으로 관리한다 (sync.sh 가 갱신하지 않음)
+# 패키지<TAB>쓰는 곳
+jq	훅·동기화 스크립트 전반
+fzf	shell/claude.zsh (ccd·ccr 목록 선택)
+terminal-notifier	hooks/notify-question.sh (누르면 iTerm 이 열리는 알림)

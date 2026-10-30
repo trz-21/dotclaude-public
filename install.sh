@@ -13,6 +13,7 @@
 #   skills/<이름>, agents/<이름>, commands/<이름>, hooks/<파일>  → 같은 이름
 #   memory/HOME<나머지>   → projects/<인코딩된 $HOME><나머지>/memory
 #   links.tsv             → "레포 경로<TAB>링크될 위치" 로 적은 그 외 항목
+#   shell/claude.zsh      → 링크하지 않고 ~/.zshrc 에 source 한 줄을 넣는다 (설치 때만, 이미 있으면 그대로)
 # 레포에서 사라진 항목(아카이브 등)을 가리키던 링크는 지운다.
 #
 # 공개 사본(.dotclaude-role = export)에 들어 있는 이 파일은 참고용이다. 거기서 실행하면 안내만 하고 아무것도 바꾸지 않는다.
@@ -123,6 +124,13 @@ for l in "$C"/skills/* "$C"/agents/* "$C"/commands/* "$C"/hooks/* "$C"/projects/
   # 이 레포(또는 옮기기 전 dotclaude 레포)를 가리키다 끊긴 링크만
   if [[ "$t" == "$repo"/* || "$t" == *dotclaude* ]] && [ ! -e "$t" ]; then say "사라진 항목의 링크 제거: $l"; run rm "$l"; fi
 done
+
+# 쉘 함수(ccd·ccr 등): ~/.zshrc 에 source 한 줄. repair(세션 시작 훅)에서는 .zshrc 를 건드리지 않는다
+ZLINE='[ -f ~/.claude/dotclaude/source/shell/claude.zsh ] && source ~/.claude/dotclaude/source/shell/claude.zsh  # dotclaude'
+if [ "$MODE" != repair ] && [ -f "$repo/shell/claude.zsh" ] && ! grep -qF 'dotclaude/source/shell/claude.zsh' "$HOME/.zshrc" 2>/dev/null; then
+  say "~/.zshrc 에 쉘 함수 연결 추가"
+  if [ "$MODE" = dry ]; then echo "  (dry) echo '$ZLINE' >> ~/.zshrc"; else printf '\n%s\n' "$ZLINE" >> "$HOME/.zshrc"; fi
+fi
 
 [ "$MODE" = install ] && [ -d "$BACKUP" ] && echo "기존 파일 백업 위치: $BACKUP"
 exit 0

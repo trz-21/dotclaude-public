@@ -38,8 +38,10 @@
 | `blocklist.txt` | 🔒 비공개 |  |
 | `export-policy.tsv` | 그대로 |  |
 | `global/CLAUDE.md` | 그대로 (검토함) | 모든 프로젝트에 적용하는 전역 지침: 실행 전 검증, git worktree 격리, dotclaude 레포 관리 규칙 |
+| `global/claude-dirs` | 🔒 비공개 |  |
 | `global/settings.json` | 그대로 (검토함) | Claude Code 전역 설정 — git·gcloud 조회·Sentry MCP 허용, 위험한 git 명령 확인, 세션 시작·종료 동기화 훅과 질문 알림 훅, 플러그인과 UI·음성 옵션 |
 | `hooks/hook-digest.py` | 그대로 (검토함) | 세션 종료 훅의 결과(스킬 자동 수정·실패·확인 대기·무인 실행 비용)를 세션 시작 때 알리고 리포트로 만드는 스크립트 |
+| `hooks/notify-question.sh` | 그대로 (검토함) | Claude가 질문이나 승인을 기다릴 때 고정 문구로 macOS 알림을 띄우고, 알림을 누르면 iTerm을 앞으로 가져오는 훅 |
 | `hooks/session-close.sh` | 그대로 (검토함) | 세션이 닫히거나 압축될 때 transcript 를 대기열에 넣고, 하루 한 번 분리된 워커가 대기열 전체로 사용자 정보 아카이빙과 스킬 개선 스킬을 무인 실행하는 훅 |
 | `install.sh` | 그대로 |  |
 | `links.tsv` | 그대로 |  |
@@ -48,8 +50,10 @@
 | `mirror-ignore.txt` | 🔒 비공개 |  |
 | `projects/masked-c1ee805a` | 🔒 비공개 |  |
 | `prompts` | 그대로 |  |
+| `setup/brew.txt` | 그대로 (검토함) | Claude 환경 셋업 스크립트가 설치하는 Homebrew 패키지 목록과 각 패키지를 쓰는 곳 |
 | `setup/mcp.json` | 가려서 공개 | 사용자 범위와 프로젝트별로 등록한 MCP 서버 목록(Notion, Sentry, Datadog, Figma, Gmail 등)과 연결 방식 |
 | `setup/plugins.json` | 그대로 (검토함) | 설치한 Claude Code 플러그인 마켓플레이스와 플러그인 목록 |
+| `shell` | 가려서 공개 | 최근 사용 빈도순으로 폴더를 골라 Claude Code를 실행하는 ccd, 전체 폴더의 지난 세션을 검색해 이어가는 ccr 쉘 함수와 세션 목록 스크립트 |
 | `skills/_shared` | 가려서 공개 | 스킬이 코드를 수정할 때 git worktree로 격리하는 공통 절차 |
 | `skills/archive-me` | 그대로 (검토함) | 세션에서 드러난 사용자 정보를 분류 체계에 따라 ~/.claude/me/에 저장하고 CLAUDE.md 인덱스를 갱신하는 스킬 |
 | `skills/hook-review` | 가려서 공개 | 세션 종료 훅이 무인으로 한 스킬 자동 수정·실패한 실행·확인 대기 수정안을 사용자와 함께 검토하고 유지·되돌림·반영·기각을 처리하는 스킬 |

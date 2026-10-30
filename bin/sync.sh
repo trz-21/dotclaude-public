@@ -3,7 +3,7 @@
 #
 # 원본 레포(~/.claude/dotclaude/source)
 #   1) 원격 변경 가져오기 + 링크 점검 (install.sh --repair)
-#   2) ~/.claude 에 새로 생긴 스킬·에이전트·커맨드·메모리를 원본 레포로 흡수
+#   2) ~/.claude 에 새로 생긴 스킬·에이전트·커맨드·훅 스크립트·메모리를 원본 레포로 흡수
 #   3) 프로젝트별 .claude 를 projects/ 로 미러
 #   4) 플러그인·MCP 설정을 setup/ 에 기록
 #   5) 스킬·프로젝트 사용 기록 누적 (state/usage/<호스트>.json)
@@ -84,6 +84,11 @@ for kind in skills agents commands; do
     case "$(basename "$p")" in synced) continue ;; esac   # claude.ai 스킬 동기화 폴더
     adopt "$p" "$SRC/$kind/$(basename "$p")"
   done
+done
+# 훅 스크립트: hooks/ 바로 아래의 실행 스크립트만 (hook.log·runs/·state/ 같은 실행 기록은 두고 간다)
+for p in "$HOME/.claude/hooks"/*.sh "$HOME/.claude/hooks"/*.py; do
+  [ -f "$p" ] && [ ! -L "$p" ] || continue
+  adopt "$p" "$SRC/hooks/$(basename "$p")"
 done
 for m in "$HOME/.claude/projects"/*/memory; do
   [ -d "$m" ] && [ ! -L "$m" ] && [ -n "$(ls -A "$m")" ] || continue

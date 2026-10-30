@@ -54,6 +54,7 @@ git -C <공개 레포> config user.email "$(gh api user -q .id)+<GitHub 사용�
 ~/.claude/dotclaude/source/bin/setup-env.sh
 ```
 마지막에 나오는 "직접 해야 할 일"을 사용자와 하나씩 처리한다.
+- Homebrew 패키지: `setup/brew.txt`에 적힌 것 중 없는 것만 설치한다 (손으로 관리하는 목록). terminal-notifier 알림 권한은 사용자가 시스템 설정에서 직접 켠다.
 - `<SET_ME>`가 있는 MCP 서버: 필요한 비밀 값을 사용자에게 받아 `claude mcp add-json`으로 추가한다. 비밀 값은 레포나 파일에 쓰지 않는다.
 - HTTP MCP 서버의 OAuth 로그인: 사용자가 Claude Code 안에서 `/mcp`로 직접 한다.
 - claude.ai 커넥터(`claude mcp list`에 `claude.ai ...`로 보이는 것)는 같은 계정으로 로그인하면 따라온다. 설치할 필요 없다.
@@ -92,12 +93,16 @@ git -C <공개 레포> config user.email "$(gh api user -q .id)+<GitHub 사용�
 | 세션 시작 | 빠진 링크 생성, 일반 파일로 바뀐 링크 복구 (변경분은 레포로) | `install.sh --repair` |
 | 세션 시작 | 훅이 무인으로 한 일 중 새로 확인할 게 있으면 한 줄 알림 (`/hook-review`로 처리), 7일 무인 실행 비용이 $10 넘으면 같이 알림 | `hooks/hook-digest.py` |
 | 세션 종료·compact | transcript를 대기열에 넣고, 24시간마다 대기열 전체로 archive-me → improve-skills를 한 번씩 실행. 실패한 세션은 대기열에 남아 다음에 재시도 | `hooks/session-close.sh` |
-| 세션 종료 | 원본: 원격 변경 받기 → 새 스킬·메모리 흡수 → 프로젝트 `.claude` 미러 → 플러그인·MCP 기록 → 사용 기록 누적 → 커밋·푸시 | `bin/sync.sh` |
+| 세션 종료 | 원본: 원격 변경 받기 → 새 스킬·훅 스크립트·메모리 흡수 → 프로젝트 `.claude` 미러 → 플러그인·MCP 기록 → 사용 기록 누적 → 커밋·푸시 | `bin/sync.sh` |
 | 세션 종료 | 공개 사본: 원본에서 다시 만들기 → 유출 검사 → 커밋·푸시 | `bin/export.py` |
 | 7일마다 | 오래 안 쓴 항목 판단 후 `archive/`로 이동 | `bin/archive-review.py` |
 
-- **흡수**: `~/.claude/skills|agents|commands/`에 실제 폴더로 새로 생긴 것과 `~/.claude/projects/*/memory`를 원본 레포로 옮기고 링크로 바꾼다.
-  `skills/synced/`(claude.ai 스킬 동기화)는 건드리지 않는다.
+- **흡수**: `~/.claude/skills|agents|commands/`에 실제 폴더로 새로 생긴 것, `~/.claude/hooks/` 바로 아래의 `*.sh`·`*.py`,
+  `~/.claude/projects/*/memory`를 원본 레포로 옮기고 링크로 바꾼다.
+  `skills/synced/`(claude.ai 스킬 동기화)와 `hooks/`의 실행 기록(`hook.log`, `runs/`, `state/`)은 건드리지 않는다.
+- **쉘 함수** (`shell/`): Claude Code 관련 쉘 함수(`ccd`·`ccr`)는 `shell/claude.zsh`에 두고 `~/.zshrc`가 source 한다.
+  `install.sh`(설치·dry-run 때만)가 `~/.zshrc`에 source 한 줄이 없으면 넣는다. 함수를 고칠 때는 레포의 `shell/claude.zsh`를 고친다.
+  `ccd` 고정 폴더 목록은 `global/claude-dirs`(→ `~/.claude-dirs`, 비공개). `.zshrc` 전체는 이 레포가 관리하지 않는다.
 - **프로젝트 미러**: 홈 아래 프로젝트별 `.claude`를 `projects/<홈 기준 경로>/`로 복사한다 (프로젝트 → 레포 한 방향).
   `settings.local.json`·로그·잠금 파일은 빼고, 그것뿐인 `.claude`는 미러하지 않는다. 제외할 경로는 `mirror-ignore.txt`.
   새 기기에서 프로젝트 설정을 되살리려면 해당 폴더를 프로젝트의 `.claude/`로 복사한다.
