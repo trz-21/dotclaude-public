@@ -15,6 +15,6 @@ fi
 
 notifier=/opt/homebrew/bin/terminal-notifier
 if ! { [ -x "$notifier" ] && "$notifier" -title "$title" -subtitle "$project" -message "$msg" \
-    -sound Glass -activate com.googlecode.iterm2 -group "claude-$project" >/dev/null 2>&1; }; then
-  osascript -e "display notification \"$msg\" with title \"$title\" subtitle \"$project\" sound name \"Glass\""
+    -activate com.googlecode.iterm2 -group "claude-$project" >/dev/null 2>&1; }; then
+  osascript -e "display notification \"$msg\" with title \"$title\" subtitle \"$project\""
 fi
