@@ -8,6 +8,8 @@ When the user specifies requirements or constraints for an action, you MUST veri
 2. **Test on one target first**: Never execute impactful commands across multiple targets at once. Run on a single target, verify the result meets all stated requirements with evidence (logs, status checks, etc.), then proceed to the rest.
 3. **Verify, don't assume**: After each step, explicitly confirm that every requirement the user stated is satisfied. Do not assume success - check with actual evidence.
 4. **If unsure, stop and ask**: If you cannot guarantee that a requirement will be met, stop and ask the user rather than proceeding optimistically.
+5. **한 번에 성공하도록 설계**: 운영·인프라 작업은 실행 전에 선행 조건, 권한, 입력값 제약(예: 필드에 허용되는 문자), 순서 의존성을 미리 확인해서 재시도 없이 한 번에 끝나게 계획한다. 다단계 작업은 리허설(작은 대상)로 전 과정을 먼저 통과시킨다.
+6. **즉시 롤백 가능한 계획만 실행**: 모든 변경은 실행 전에 되돌리는 방법(백업, 스냅샷, 이전 설정값, 되돌리기 명령)을 먼저 마련하고 확인한다. 실패 판단 기준과 롤백 절차를 계획에 함께 적고, 되돌릴 수 없는 단계는 따로 표시해 승인받는다.
 
 ## Git Worktree 격리
 

@@ -37,7 +37,7 @@
 | `bin` | 그대로 |  |
 | `blocklist.txt` | 🔒 비공개 |  |
 | `export-policy.tsv` | 그대로 |  |
-| `global/CLAUDE.md` | 그대로 (검토함) | 모든 프로젝트에 적용하는 전역 지침: 실행 전 검증, git worktree 격리, dotclaude 레포 관리 규칙 |
+| `global/CLAUDE.md` | 그대로 (검토함) | 모든 프로젝트에 적용하는 전역 지침으로, 실행 전 검증·단일 대상 리허설·롤백 가능한 계획, git worktree 격리, ~/.claude 설정을 레포로 관리하는 규칙을 담는다. |
 | `global/claude-dirs` | 🔒 비공개 |  |
 | `global/settings.json` | 그대로 (검토함) | Claude Code 전역 설정 — git·gcloud 조회·Sentry MCP 허용, 위험한 git 명령 확인, 세션 시작·종료 동기화 훅과 질문 알림 훅, 플러그인과 UI·음성 옵션 |
 | `hooks/hook-digest.py` | 그대로 (검토함) | 세션 종료 훅의 결과(스킬 자동 수정·실패·확인 대기·무인 실행 비용)를 세션 시작 때 알리고 리포트로 만드는 스크립트 |
