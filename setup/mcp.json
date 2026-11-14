@@ -54,6 +54,10 @@
       "type": "http",
       "url": "https://mcp.datadoghq.com/api/unstable/mcp-server/mcp"
     },
+    "figma": {
+      "type": "http",
+      "url": "https://mcp.figma.com/mcp"
+    },
     "gmail-<ACCOUNT>": {
       "args": [
         "-y",

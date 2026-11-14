@@ -52,7 +52,7 @@
 | `projects/masked-c1ee805a` | 🔒 비공개 |  |
 | `prompts` | 그대로 |  |
 | `setup/brew.txt` | 그대로 (검토함) | Claude 환경 셋업 스크립트가 설치하는 Homebrew 패키지 목록과 각 패키지를 쓰는 곳 |
-| `setup/mcp.json` | 가려서 공개 | 사용자 범위와 프로젝트별로 등록한 MCP 서버 목록(Notion, Sentry, Datadog, Figma, Gmail 등)과 연결 방식 |
+| `setup/mcp.json` | 가려서 공개 | 사용자·프로젝트 범위별로 등록한 MCP 서버(Notion, Sentry, Datadog, Figma, Gmail) 설정 목록 |
 | `setup/plugins.json` | 그대로 (검토함) | 설치한 Claude Code 플러그인 마켓플레이스와 플러그인 목록 |
 | `shell` | 가려서 공개 | 최근 사용 빈도순으로 폴더를 골라 Claude Code를 실행하는 ccd, 전체 폴더의 지난 세션을 검색해 이어가는 ccr 쉘 함수와 세션 목록 스크립트 |
 | `skills/_shared` | 가려서 공개 | 스킬이 코드를 수정할 때 git worktree로 격리하는 공통 절차 |
