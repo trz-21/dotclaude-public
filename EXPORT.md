@@ -60,5 +60,5 @@
 | `skills/archive-me` | 그대로 (검토함) | 세션에서 드러난 사용자 정보를 분류 체계에 따라 ~/.claude/me/ 아카이브에 저장하고 CLAUDE.md 인덱스를 갱신하는 스킬 |
 | `skills/frontend-slides` | 🔒 비공개 |  |
 | `skills/hook-review` | 가려서 공개 | 세션 종료 훅이 무인으로 한 스킬 자동 수정·실패한 실행·확인 대기 수정안을 사용자와 함께 검토하고 유지·되돌림·반영·기각을 처리하는 스킬 |
-| `skills/hstracker-update` | 🔒 비공개 |  |
+| `skills/hstracker-update` | 그대로 (검토함) | 맥 HSTracker 커스텀 빌드(종족 버그 수정·세션 패널 독립 창·상대 MMR 호버)를 새 공식 버전에 맞춰 DLL 교체·재서명으로 다시 만들어 설치하고 Sparkle 자동 업데이트 함정을 피하는 스킬 |
 | `skills/improve-skills` | 가려서 공개 | 세션에서 쓴 스킬(훅이 무인으로 돌린 실행 포함)을 돌아보고 사용자 교정·실패 신호를 등급별로 모아 스킬 파일에 직접 반영하며 백업과 변경 기록을 남기는 스킬 |
