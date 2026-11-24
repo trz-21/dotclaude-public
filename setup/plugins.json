@@ -8,6 +8,10 @@
       "repo": "chrisryugj/korean-law-mcp",
       "source": "github"
     },
+    "<ORG>": {
+      "repo": "<GITHUB_ORG>/claude-plugins",
+      "source": "github"
+    },
     "team-attention-plugins": {
       "repo": "team-attention/plugins-for-claude-natives",
       "source": "github"
@@ -24,6 +28,10 @@
     },
     {
       "id": "skill-creator@claude-plugins-official",
+      "scope": "user"
+    },
+    {
+      "id": "<ORG>@<ORG>",
       "scope": "user"
     }
   ]

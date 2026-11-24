@@ -117,13 +117,20 @@
   "enabledPlugins": {
     "session-wrap@team-attention-plugins": true,
     "skill-creator@claude-plugins-official": true,
-    "korean-law@korean-law-marketplace": true
+    "korean-law@korean-law-marketplace": true,
+    "<ORG>@<ORG>": true
   },
   "extraKnownMarketplaces": {
     "korean-law-marketplace": {
       "source": {
         "source": "github",
         "repo": "chrisryugj/korean-law-mcp"
+      }
+    },
+    "<ORG>": {
+      "source": {
+        "source": "github",
+        "repo": "<GITHUB_ORG>/claude-plugins"
       }
     }
   },
