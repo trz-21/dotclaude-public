@@ -4,6 +4,7 @@
 출력:
   ## 사용된 스킬   이름, SKILL.md 위치, 호출 횟수
   ## 대화 흐름     [USER] 발화 전문, [SKILL ▶] 호출 지점, [CLAUDE] 응답, [TOOL-ERR] 도구 에러
+                  [COMPACT-SUMMARY] 대화 압축 때 Claude가 쓴 요약 (사용자 발화 아님)
                   ([CLAUDE]는 사용자 발화 직전·세션 마지막 응답만 길게, 나머지는 앞부분만)
 
 사용법:
@@ -22,6 +23,7 @@ from pathlib import Path
 CLAUDE_MAX = 1000       # 중간 응답 (도구·저장 결과 보고까지 보이게)
 CLAUDE_TURN_MAX = 4000  # 사용자 발화 직전·세션 마지막 응답 (질문 목록, 최종 결과 보고)
 ERR_MAX = 300
+COMPACT_PREFIX = "This session is being continued from a previous conversation"
 
 
 def texts(content):
@@ -83,6 +85,11 @@ def main():
                     flow.append(f"[TOOL-ERR] {e[:ERR_MAX]}")
         txt = texts(content).strip()
         if not txt:
+            continue
+
+        # compact 요약은 Claude가 쓴 글이라 사용자 발화와 따로 표시한다 (본문에 스킬 경로가 들어 있어도 스킬 주입으로 보지 않는다)
+        if d.get("isCompactSummary") or txt.startswith(COMPACT_PREFIX):
+            flow.append(f"[COMPACT-SUMMARY] {txt}")
             continue
 
         m = re.search(r"Base directory for this skill: (\S+)", txt)

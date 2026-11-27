@@ -37,6 +37,8 @@ inbox는 hook 모드가 애매한 충돌을 미뤄두는 곳이라, 대화형 �
 python3 ~/.claude/skills/archive-me/scripts/extract_transcript.py <transcript.jsonl>
 ```
 이미 처리한 줄 이후만 출력된다 (compact 후 /clear처럼 같은 세션이 두 번 들어와도 중복 처리 안 됨).
+`[COMPACT-SUMMARY]` 블록은 대화 압축 때 Claude가 쓴 요약이라 `직접` 출처로 쓰지 않는다. 단 그 안의
+"All user messages"에 그대로 인용된 사용자 메시지는 사용자 발화로 본다 (요약문이 `[USER]`로 섞여 들어와 구분이 필요했음).
 출력이 비어 있으면 Step 5의 `--mark`만 하고 종료한다.
 
 **hook 모드**: 인자로 받은 추출본 파일을 Read로 읽는다. 추출본은 세션이 여럿이면 Read 한도(25000토큰)를 자주 넘으므로
@@ -121,6 +123,9 @@ Step 2.5의 후보 파일에 쌓았다가, **서로 다른 세션 2곳 이상**�
 **summary 체크 (모든 모드 필수)**: 이번에 수정한 파일마다 frontmatter `summary`를 다시 읽고, 새로 넣거나
 지난 기록으로 옮긴 내용이 반영됐는지 확인해서 고친다. CLAUDE.md 인덱스에는 이 한 줄만 노출되므로,
 본문만 바꾸고 summary를 두면 다른 세션은 옛 정보를 보게 된다 (hook 모드에서 실제로 빠뜨린 적 있음).
+summary는 **현재 상태 위주로 약 200자 안쪽**으로 쓴다. 날짜별 진행 경과를 덧붙이지 말고, 지난 단계가 된 내용은
+summary에서 빼서 본문 `## 지난 기록`에만 둔다. 이미 200자를 넘은 summary를 만나면 이번에 줄인다
+(인덱스가 매 세션 컨텍스트에 실리는데, 경과를 계속 덧붙여 한 줄이 1000자를 넘은 적이 있음).
 
 ```bash
 python3 ~/.claude/skills/archive-me/scripts/build_index.py
@@ -137,7 +142,9 @@ python3 ~/.claude/skills/archive-me/scripts/extract_transcript.py <transcript.js
 hook 모드는 입력에 든 **세션마다 한 줄**(`hook:<그 세션 id 앞 8자>`)을 남기고, 여러 줄을 Edit 한 번으로 덧붙인다.
 Edit로 덧붙일 때는 파일의 **마지막 줄 전체**를 `old_string`으로 쓴다. 줄 끝 일부만 쓰면
 "저장할 사용자 정보 없음" 같은 반복 문구가 여러 줄에 걸려 매칭이 실패한다 (hook 모드에서 연속으로 겪음).
-마지막 줄은 `_log.md`를 Read로 통째로 읽어 확인한다. Grep `offset`은 음수(끝에서부터)를 받지 않아 에러가 난다.
+마지막 줄은 끝부분만 읽어 확인한다. `_log.md`는 이미 Read 한도(25000토큰)를 넘어 통째로 읽으면 에러가 나므로,
+Grep 패턴 `^`·`output_mode: count`로 줄 수 N을 얻고 Read `offset: N-10`으로 읽는다
+(Grep·Read `offset`은 음수(끝에서부터)를 받지 않는다. 통째 읽기 지시로 훅 실행 2번이 에러·재시도를 겪음).
 
 ## Step 6: 보고
 

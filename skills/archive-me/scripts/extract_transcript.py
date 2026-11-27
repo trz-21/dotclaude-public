@@ -13,6 +13,7 @@ from pathlib import Path
 
 STATE = Path.home() / ".claude/me/.state.json"
 ASSISTANT_MAX = 1000      # 어시스턴트 응답은 맥락용이므로 앞부분만
+COMPACT_PREFIX = "This session is being continued from a previous conversation"
 ASSISTANT_TURN_MAX = 4000  # 사용자 발화 직전·마지막 응답은 길게 (번호 답이 가리키는 질문 목록 등)
 
 
@@ -67,7 +68,11 @@ def main():
             txt = text_of(msg.get("content")).strip()
             if not txt or txt.startswith(("<local-command", "<command-", "<system-reminder", "<task-notification")):
                 continue
-            out.append(("USER", txt))
+            # compact 요약은 Claude가 쓴 글이라 사용자 발화와 따로 표시한다
+            if d.get("isCompactSummary") or txt.startswith(COMPACT_PREFIX):
+                out.append(("COMPACT-SUMMARY", txt))
+            else:
+                out.append(("USER", txt))
         elif t == "assistant":
             txt = text_of(msg.get("content")).strip()
             if txt:

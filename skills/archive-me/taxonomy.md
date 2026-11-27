@@ -46,7 +46,7 @@
 
 ```markdown
 ---
-summary: 한 줄 요약 (CLAUDE.md 인덱스에 그대로 노출되니, 파일을 안 열어도 핵심이 보이게)
+summary: 한 줄 요약 (CLAUDE.md 인덱스에 그대로 노출되니, 파일을 안 열어도 핵심이 보이게. 현재 상태 위주로 약 200자 안쪽)
 updated: YYYY-MM-DD
 ---
 # 제목
